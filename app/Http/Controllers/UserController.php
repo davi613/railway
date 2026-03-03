@@ -9,7 +9,7 @@ class UserController extends Controller
     public function index()
     {
         
-        $users = User::all();
+        $users = User::paginate(10);
         return view('users.index', [
             'title' => 'Admin',
             'menu' => 'Users',
@@ -90,4 +90,14 @@ class UserController extends Controller
 
         return redirect()->route('users.index')->with('success', 'User berhasil dihapus!');
     }
+
+    public function bulkDelete(Request $request)
+{
+    $ids = $request->input('ids');
+    if ($ids) {
+        User::whereIn('id', $ids)->delete();
+        return redirect()->route('users.index')->with('success', 'Pengguna berhasil dihapus!');
+    }
+    return redirect()->route('users.index')->with('error', 'Tidak ada pengguna yang dipilih.');
+}
 }

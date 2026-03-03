@@ -97,9 +97,7 @@
 						<li class="nav-item {{ Request::routeIs('pesanan.index') ? 'active' : '' }}">
 							<a href="{{ route('pesanan.index') }}" class="nav-link" style="font-size: 15px; {{ Request::routeIs('pesanan.index') ? 'color: orange;' : '' }}">Pesanan</a>
 						</li>
-						<li class="nav-item {{ Request::routeIs('profile.index') ? 'active' : '' }}">
-							<a href="{{ route('profile.index') }}" class="nav-link" style="font-size: 15px; {{ Request::routeIs('profile.index') ? 'color: orange;' : '' }}">PROFILE SAYA</a>
-    					</li>
+				
 
                     <li class="nav-item cta cta-colored">
                         <a href="{{ route('cart.index') }}" class="nav-link">

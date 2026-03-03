@@ -24,6 +24,17 @@
                 </div>
 
                 <div class="card-body">
+                <div class="row mb-3">
+    <div class="col-md-6">
+        <form method="GET" action="{{ route('metode_bayar.index') }}" class="d-flex">
+            <input type="text" name="search" value="{{ request('search') }}" class="form-control rounded-start-pill border-success" placeholder="Cari metode pembayaran...">
+            <button type="submit" class="btn btn-success rounded-end-pill ms-1">
+                <i class="bi bi-search me-1"></i> Cari
+            </button>
+        </form>
+    </div>
+</div>
+
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover align-middle text-center">
                             <thead class="table-light text-uppercase text-secondary">
@@ -55,7 +66,9 @@
                                             </form>
                                         </div>
                                         </td>
-                                        <td>{{ $no + 1 }}</td>
+                                        {{-- <td>{{ $no + 1 }}</td> --}}
+                                        <td>{{ $metodeBayars->firstItem() + $no }}</td>
+
                                         <td class="text-start">{{ $item->metode_pembayaran }}</td>
                                         <td>{{ $item->tempat_bayar }}</td>
                                         <td>{{ $item->no_rekening ?? '-' }}</td>
@@ -82,8 +95,41 @@
                                     </tr>
                                 @endif
                             </tbody>
+                            
                         </table>
+                        
                     </div>
+                    {{-- Pagination --}}
+@if ($metodeBayars->hasPages())
+    <div class="d-flex justify-content-center mt-4">
+        <nav>
+            <ul class="pagination mb-0">
+                {{-- Tombol Previous --}}
+                @if ($metodeBayars->onFirstPage())
+                    <li class="page-item disabled">
+                        <span class="page-link">Previous</span>
+                    </li>
+                @else
+                    <li class="page-item">
+                        <a class="page-link" href="{{ $metodeBayars->previousPageUrl() }}&search={{ request('search') }}">Previous</a>
+                    </li>
+                @endif
+
+                {{-- Tombol Next --}}
+                @if ($metodeBayars->hasMorePages())
+                    <li class="page-item">
+                        <a class="page-link" href="{{ $metodeBayars->nextPageUrl() }}&search={{ request('search') }}">Next</a>
+                    </li>
+                @else
+                    <li class="page-item disabled">
+                        <span class="page-link">Next</span>
+                    </li>
+                @endif
+            </ul>
+        </nav>
+    </div>
+@endif
+
                 </div>
             </div>
         </div>

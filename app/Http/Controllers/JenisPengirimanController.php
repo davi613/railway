@@ -8,15 +8,25 @@ use Illuminate\Support\Facades\Storage;
 
 class JenisPengirimanController extends Controller
 {
-    public function index()
-    {
-        $jenisPengiriman = JenisPengiriman::all();
-        return view('jenis_pengiriman.index', [
-            'title' => 'Admin',
-            'menu' => 'Pengiriman',
-            'jenisPengiriman' => $jenisPengiriman
-        ]);
+    public function index(Request $request)
+{
+    $query = JenisPengiriman::query();
+
+    if ($request->has('search')) {
+        $search = $request->search;
+        $query->where('jenis_kirim', 'like', "%$search%")
+              ->orWhere('nama_ekspedisi', 'like', "%$search%");
     }
+
+    $jenisPengiriman = $query->orderBy('created_at', 'desc')->paginate(10);
+
+    return view('jenis_pengiriman.index', [
+        'jenisPengiriman' => $jenisPengiriman,
+        'title' => 'Admin',
+        'menu' => 'Pengiriman',
+    ]);
+}
+
 
     public function create()
     {

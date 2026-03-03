@@ -100,7 +100,7 @@
                         <div class="col-auto">
                             <label for="status" class="sr-only">Status</label>
                             <select style="border-radius:10px; border-color:black;" name="status" id="status" class="form-control">
-                                <option value="">-- Semua Status --</option>
+                                <option value="">Semua Status</option>
                                 <option value="Menunggu Konfirmasi" {{ request('status') == 'Menunggu Konfirmasi' ? 'selected' : '' }}>Menunggu Konfirmasi</option>
                                 <option value="Menunggu Kurir" {{ request('status') == 'Menunggu Kurir' ? 'selected' : '' }}>Menunggu Kurir</option>
                                 <option value="Diproses" {{ request('status') == 'Diproses' ? 'selected' : '' }}>Diproses</option>
@@ -121,7 +121,7 @@
                         <table class="table table-bordered table-hover text-center">
                             <thead class="thead-light">
                                 <tr>
-                                    <th>No</th>
+                                    <th>No.</th>
                                     <th>Tanggal</th>
                                     <th>Total</th>
                                     <th>Status</th>
@@ -165,10 +165,27 @@
                     </div>
 
                     <!-- Pagination Buttons -->
-                    <div class="mt-4 text-center">
+                    {{-- <div class="mt-4 text-center">
                         <button id="btn-prev" class="btn btn-custom" disabled>Previous</button>
                         <button id="btn-next" class="btn btn-custom">Next</button>
+                    </div> --}}
+                    <div class="mt-4 text-center">
+                        {{-- Tombol Previous --}}
+                        <a href="{{ $orders->previousPageUrl() }}" class="btn btn-custom {{ $orders->onFirstPage() ? 'disabled' : '' }}">
+                            Previous
+                        </a>
+
+                        {{-- Tombol Next --}}
+                        <a href="{{ $orders->nextPageUrl() }}" class="btn btn-custom {{ $orders->hasMorePages() ? '' : 'disabled' }}">
+                            Next
+                        </a>
+
+                        {{-- Info halaman --}}
+                        <div class="mt-2 text-muted" style="font-weight: 500;">
+                            Page {{ $orders->currentPage() }} of {{ $orders->lastPage() }}
+                        </div>
                     </div>
+
                 @else
                     @if(request('status') != '')
                     <div class="alert alert-info text-center">

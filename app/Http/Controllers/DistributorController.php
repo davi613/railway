@@ -7,15 +7,24 @@ use Illuminate\Http\Request;
 
 class DistributorController extends Controller
 {
-    public function index()
-    {
-        $distributors = Distributor::all();
-        return view('distributor.index', [
-            'title' => 'Admin',
-            'menu' => 'Distributor',
-            'distributors' => $distributors
-        ]);
-    }
+    public function index(Request $request)
+{
+    $search = $request->input('search');
+
+    $distributors = Distributor::when($search, function ($query, $search) {
+        return $query->where('nama_distributor', 'like', "%{$search}%")
+                     ->orWhere('telepon', 'like', "%{$search}%")
+                     ->orWhere('alamat', 'like', "%{$search}%");
+    })->orderBy('created_at', 'desc')->paginate(10);
+
+    return view('distributor.index', [
+        'title' => 'Admin',
+        'menu' => 'Distributor',
+        'distributors' => $distributors,
+        'search' => $search
+    ]);
+}
+
 
     public function create()
     {

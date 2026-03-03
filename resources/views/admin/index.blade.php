@@ -74,7 +74,7 @@
                         <h5 class="card-title fw-bold mb-3">System Summary</h5>
                         <ul class="list-unstyled">
                             <li>📡 Status Server: <span class="badge bg-success">Online</span></li>
-                            <li>🕒 Total Waktu Aktif Server (Per Tanggal Sekarang): <strong>{{ now()->format('H:i:s') }}</strong></li>
+                            {{-- <li>🕒 Total Waktu Aktif Server (Per Tanggal Sekarang): <strong>{{ now()->format('H:i:s') }}</strong></li> --}}
                         </ul>
                     </div>
                     <div class="text-end">

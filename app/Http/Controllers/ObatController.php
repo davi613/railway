@@ -9,15 +9,28 @@ use Illuminate\Support\Facades\Storage;
 
 class ObatController extends Controller
 {
-    public function index()
-    {
-        $obats = Obat::with('jenisObat')->get();
-        return view('obat.index', [
-            'title' => 'Apoteker',
-            'menu' => 'Obat',
-            'obats' => $obats
-        ]);
-    }
+    public function index(Request $request)
+{
+    $search = $request->input('search');
+
+    $obats = Obat::with('jenisObat')
+        ->when($search, function ($query, $search) {
+            return $query->where('nama_obat', 'like', "%{$search}%")
+                         ->orWhereHas('jenisObat', function ($q) use ($search) {
+                             $q->where('jenis', 'like', "%{$search}%");
+                         });
+        })
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);
+
+    return view('obat.index', [
+        'title' => 'Apoteker',
+        'menu' => 'Obat',
+        'obats' => $obats,
+        'search' => $search,
+    ]);
+}
+
 
     public function create()
     {

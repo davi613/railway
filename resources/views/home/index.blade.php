@@ -12,8 +12,8 @@
 					<div class="one-forth d-flex align-items-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
 						<div class="text">
 							<div class="horizontal">
-								<h1 class="mb-4 mt-3">Koleksi Obat Terlengkap 2025</h1>
-								<p class="mb-4">Kami menyediakan berbagai jenis obat terpercaya, dari obat generik hingga obat resep, untuk menunjang kesehatan Anda dan keluarga.</p>
+								<h1 style="color:black"  class="mb-4 mt-3">Koleksi Obat Terlengkap 2025</h1>
+								<p style="color:black"  class="mb-4">Kami menyediakan berbagai jenis obat terpercaya, dari obat generik hingga obat resep, untuk menunjang kesehatan Anda dan keluarga.</p>
 								
 								<p><a href="{{ route ('shop.index') }}" class="btn-custom" style="border-radius:50px;">Shop Now</a></p>
 							</div>
@@ -31,8 +31,8 @@
 					<div class="one-forth d-flex align-items-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
 						<div class="text">
 							<div class="horizontal">
-								<h1 class="mb-4 mt-3">Koleksi Obat Terbaru</h1>
-								<p class="mb-4">Temukan berbagai pilihan obat berkualitas untuk memenuhi kebutuhan kesehatan Anda. Tersedia obat bebas hingga obat dengan resep dokter.</p>
+								<h1 style="color:black"  class="mb-4 mt-3">Koleksi Obat Terbaru</h1>
+								<p style="color:black"  class="mb-4">Temukan berbagai pilihan obat berkualitas untuk memenuhi kebutuhan kesehatan Anda. Tersedia obat bebas hingga obat dengan resep dokter.</p>
 
 								
 								<p><a href="{{ route ('shop.index') }}" class="btn-custom" style="border-radius:50px;">Shop Now</a></p>

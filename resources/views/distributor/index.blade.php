@@ -13,7 +13,8 @@
     <div class="row g-4">
         <div class="col-12">
             <div class="bg-white rounded-3 shadow p-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+
                     <div>
                         <h3 class="fw-bold text-purple mb-1">
                             <i class="bi bi-truck me-2"></i>Manajemen Distributor
@@ -23,6 +24,17 @@
                     <a href="{{ route('distributor.create') }}" class="btn btn-success btn-sm px-3 py-2 shadow-sm">
                         <i class="bi bi-plus-circle me-2"></i>Tambah Distributor
                     </a>
+
+                    <form action="{{ route('distributor.index') }}" method="GET" class="d-flex align-items-center ms-3" style="max-width: 300px;">
+                        <div class="input-group shadow-sm">
+                            <input type="text" name="search" class="form-control border-success" placeholder="Cari distributor..." value="{{ request('search') }}">
+                            <button class="btn btn-success px-3" type="submit">
+                                <i class="bi bi-search me-1"></i> Cari
+                            </button>
+                        </div>
+                    </form>
+
+
                 </div>
 
                 <div class="table-responsive">
@@ -55,7 +67,9 @@
                                             </form>
                                         </div>
                                     </td>
-                                    <td>{{ $no + 1 }}</td>
+                                    {{-- <td>{{ $no + 1 }}</td> --}}
+                                    <td>{{ $distributors->firstItem() + $no }}</td>
+
                                     <td class="fw-semibold text-capitalize">{{ $distributor->nama_distributor }}</td>
                                     <td>
                                         <span class="badge bg-light text-dark border">
@@ -76,6 +90,34 @@
                             @endforelse
                         </tbody>
                     </table>
+                    @if ($distributors->hasPages())
+    <div class="d-flex justify-content-center mt-3">
+        <ul class="pagination">
+            {{-- Tombol Previous --}}
+            @if ($distributors->onFirstPage())
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+            @else
+                <li class="page-item">
+                    <a class="page-link" href="{{ $distributors->previousPageUrl() }}&search={{ request('search') }}" rel="prev">Previous</a>
+                </li>
+            @endif
+
+            {{-- Tombol Next --}}
+            @if ($distributors->hasMorePages())
+                <li class="page-item">
+                    <a class="page-link" href="{{ $distributors->nextPageUrl() }}&search={{ request('search') }}" rel="next">Next</a>
+                </li>
+            @else
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+            @endif
+        </ul>
+    </div>
+@endif
+
                 </div>
 
             </div>

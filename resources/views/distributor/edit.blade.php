@@ -17,9 +17,9 @@
                     <h5 class="mb-0">
                         <i class="bi bi-pencil-square me-2"></i>Edit Distributor
                     </h5>
-                    <a href="{{ route('distributor.index') }}" class="btn btn-outline-light btn-sm">
+                    {{-- <a href="{{ route('distributor.index') }}" class="btn btn-outline-light btn-sm">
                         <i class="bi bi-arrow-left-circle me-1"></i>Kembali
-                    </a>
+                    </a> --}}
                 </div>
                 <div class="card-body">
                     <form action="{{ route('distributor.update', $distributor->id) }}" method="POST">
@@ -34,7 +34,7 @@
 
                         <div class="mb-3">
                             <label for="telepon" class="form-label fw-semibold">Telepon <span class="text-danger">*</span></label>
-                            <input type="text" name="telepon" id="telepon" class="form-control"
+                            <input type="number" name="telepon" id="telepon" class="form-control"
                                 value="{{ old('telepon', $distributor->telepon) }}" required
                                 maxlength="15" pattern="\d{8,15}" title="Masukkan 8-15 digit angka saja">
                             <div class="form-text">Format angka 8-15 digit. Contoh: 081234567890</div>
@@ -46,12 +46,12 @@
                         </div>
 
                         <div class="text-end">
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-save me-1"></i>Simpan Perubahan
-                            </button>
                             <a style="background-color:orange;" href="{{ route('distributor.index') }}" class="btn btn-secondary">
                                 <i class="bi bi-x-circle me-1"></i>Batal
                             </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-save me-1"></i>Simpan Perubahan
+                            </button>
                         </div>
                     </form>
                 </div>

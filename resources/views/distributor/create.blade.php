@@ -17,9 +17,9 @@
                     <h5 class="mb-0">
                         <i class="bi bi-plus-circle me-2"></i>Tambah Distributor Baru
                     </h5>
-                    <a href="{{ route('distributor.index') }}" class="btn btn-outline-light btn-sm">
+                    {{-- <a href="{{ route('distributor.index') }}" class="btn btn-outline-light btn-sm">
                         <i class="bi bi-arrow-left me-1"></i>Kembali
-                    </a>
+                    </a> --}}
                 </div>
                 <div class="card-body">
                     <form action="{{ route('distributor.store') }}" method="POST">
@@ -45,12 +45,12 @@
                         </div>
 
                         <div class="text-end mt-4">
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-save me-1"></i>Simpan
-                            </button>
                             <a style="background-color:orange;" href="{{ route('distributor.index') }}" class="btn btn-secondary">
                                 <i class="bi bi-x-circle me-1"></i>Batal
                             </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-save me-1"></i>Simpan
+                            </button>
                         </div>
                     </form>
                 </div>

@@ -14,7 +14,7 @@
                     @csrf
                     <div class="mb-3">
                         <label for="nonota" class="form-label">No Nota</label>
-                        <input type="text" class="form-control" id="nonota" name="nonota" required maxlength="100">
+                        <input type="number" class="form-control" id="nonota" name="nonota" required maxlength="100">
                     </div>
                     <div class="mb-3">
                         <label for="tgl_pembelian" class="form-label">Tanggal Pembelian</label>

@@ -12,6 +12,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\KonfirmasiController;
 use App\Http\Controllers\DetailPesananController;
+use App\Http\Controllers\UserController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -76,6 +77,8 @@ Route::resource('/product-detail', \App\Http\Controllers\ProductdetailController
 
 
 //HALAMAN BACK END
+// Pindahkan ke luar agar semua bisa akses
+Route::delete('/users/bulk-delete', [UserController::class, 'bulkDelete'])->name('users.bulkDelete');
 Route::resource('/detail_jual', \App\Http\Controllers\DetailJualController::class);
 
 Route::middleware(['role:admin'])->group(function () {

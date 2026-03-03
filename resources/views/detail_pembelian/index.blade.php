@@ -7,7 +7,7 @@
         <div class="col-12">
             <div class="bg-light rounded h-100 p-4 shadow-sm">
                 <div class="row mb-5">
-                    <div class="col-auto me-auto mb-4 h3 text-black-50">Detail Pembelian</div>
+                    <div class="col-auto me-auto mb-4 h3 text-black-50">Detail Data Pembelian Obat</div>
                     <div class="col-auto">
                         <a href="{{ route('detail_pembelian.create') }}" class="btn" style="background-color: #006400; color: white;">
                             <i class="fas fa-plus me-2"></i>Tambah Detail

@@ -244,7 +244,26 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                   
+                    Layanan
+Aplikasi menyediakan pembelian obat bebas dan obat resep. Obat keras hanya bisa dibeli dengan resep dokter.
+
+Data Pengguna
+Data pribadi digunakan hanya untuk keperluan transaksi dan dijaga kerahasiaannya.
+
+Pembayaran
+Transaksi dilakukan melalui metode pembayaran yang tersedia di aplikasi dan tidak bisa diubah setelah diproses.
+
+Pengiriman
+Obat dikirim ke alamat pengguna sesuai wilayah layanan. Pastikan data pengiriman benar.
+
+Pengembalian
+Obat tidak dapat dikembalikan, kecuali salah kirim, rusak, atau kedaluwarsa.
+
+Tanggung Jawab
+Penggunaan obat menjadi tanggung jawab pengguna. Aplikasi hanya sebagai perantara antara apotek dan pembeli.
+
+Perubahan Ketentuan
+Ketentuan dapat berubah sewaktu-waktu. Pengguna dianggap setuju setelah menggunakan aplikasi.
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-orange" data-dismiss="modal">Tutup</button>

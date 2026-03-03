@@ -8,15 +8,26 @@ use Illuminate\Support\Facades\Storage;
 
 class JenisObatController extends Controller
 {
-    public function index()
-    {
-        $jenisObats = JenisObat::latest()->get();
-        return view('jenis_obat.index', [
-            'title' => 'Apoteker',
-            'menu' => 'Master Data',
-            'jenisObats' => $jenisObats
-        ]);
+   public function index(Request $request)
+{
+    $search = $request->query('search');
+    $query = JenisObat::query();
+
+    if ($search) {
+        $query->where('jenis', 'like', '%' . $search . '%')
+              ->orWhere('deskripsi_jenis', 'like', '%' . $search . '%');
     }
+
+    $jenisObats = $query->latest()->paginate(10)->withQueryString();
+
+    return view('jenis_obat.index', [
+        'title' => 'Apoteker',
+        'menu' => 'Master Data',
+        'jenisObats' => $jenisObats,
+        'search' => $search,
+    ]);
+}
+
 
     public function create()
     {

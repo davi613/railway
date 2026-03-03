@@ -12,10 +12,17 @@ class PembelianController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $pembelians = Pembelian::with('distributor')->latest()->get();
-        
+        $query = Pembelian::with('distributor')->latest();
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where('nonota', 'like', "%$search%");
+        }
+
+        $pembelians = $query->paginate(10)->withQueryString();
+
         return view('pembelian.index', [
             'title' => 'Apoteker',
             'menu' => 'Pembelian',

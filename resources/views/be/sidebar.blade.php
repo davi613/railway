@@ -24,6 +24,13 @@
                     <div class="text-wrapper">
                         <p class="mb-1 mt-3">{{ Auth::user()->name }}</p>
                         <p class="font-weight-light text-muted mb-0">{{ Auth::user()->email }}</p>
+                         <form action="{{ route('logout') }}" method="POST" class="pt-2">
+                            @csrf
+                            <button type="submit" style="background-color:orange;border-radius: 15px;color:white;" title="Logout" style="border-radius: 50%; padding: 10px 12px;">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                            </button>
+                        </form>
                     </div>
                 </div>
             </a>
@@ -186,4 +193,6 @@
             </li>
         @endif
     </ul>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </nav>
