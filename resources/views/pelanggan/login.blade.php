@@ -120,6 +120,7 @@
     </form>
 
     <p>Belum punya akun? <a href="{{ route('pelanggan.register') }}">Daftar disini</a></p>
+    <p>Login sebagai pengelola: <a href="{{ route('login') }}">Login disini</a></p>
 </div>
 @if(session('error'))
     <div class="alert alert-danger">

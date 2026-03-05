@@ -1,198 +1,206 @@
-<nav class="sidebar sidebar-offcanvas" id="sidebar">
-    <ul class="nav">
-        <li class="nav-item navbar-brand-mini-wrapper">
-            <a class="nav-link navbar-brand brand-logo-mini" href="#">
-                <img src="{{ asset('back-end/images/logo-mini.svg') }}" alt="logo" />
-            </a>
-        </li>
+<nav class="bph-sidebar" id="bphSidebar">
 
-        <li class="nav-item nav-profile">
-            <a href="#" class="nav-link">
-                <div class="profile-image">
-                    @if ($title === 'Admin')
-                        <img class="img-xs rounded-circle" src="{{ asset('back-end/pht/admin.jpg') }}" alt="profile image">
-                    @elseif ($title === 'Apoteker')
-                        <img class="img-xs rounded-circle" src="{{ asset('back-end/pht/apoteker.jpg') }}" alt="profile image">
-                    @elseif ($title === 'Karyawan')
-                        <img class="img-xs rounded-circle" src="{{ asset('back-end/pht/karyawan.jpg') }}" alt="profile image">
-                    @elseif ($title === 'Kasir')
-                        <img class="img-xs rounded-circle" src="{{ asset('back-end/pht/kasir.jpg') }}" alt="profile image">
-                    @else
-                        <img class="img-xs rounded-circle" src="{{ asset('back-end/pht/owner.jpg') }}" alt="profile image">
-                    @endif
+    <!-- Brand -->
+    <a class="bph-sidebar-brand" href="#">
+        <div class="bph-brand-icon">
+            <i class="bi bi-capsule-pill"></i>
+        </div>
+        <div class="bph-brand-text">
+            <div class="t1">BioPharm</div>
+            <div class="t2">Admin Panel</div>
+        </div>
+    </a>
 
-                    <div class="text-wrapper">
-                        <p class="mb-1 mt-3">{{ Auth::user()->name }}</p>
-                        <p class="font-weight-light text-muted mb-0">{{ Auth::user()->email }}</p>
-                         <form action="{{ route('logout') }}" method="POST" class="pt-2">
-                            @csrf
-                            <button type="submit" style="background-color:orange;border-radius: 15px;color:white;" title="Logout" style="border-radius: 50%; padding: 10px 12px;">
-                                <i class="fas fa-sign-out-alt"></i>
-                                Logout
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </a>
-        </li>
-
+    <!-- Profile -->
+    <div class="bph-sidebar-profile">
         @if ($title === 'Admin')
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.index') }}">
-                    <span class="menu-title">Dashboard</span>
-                    <i class="icon-grid menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('users.index') }}">
-                    <span class="menu-title">Hak Akses Users</span>
-                    <i class="icon-key menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('costumer.index') }}">
-                    <span class="menu-title">User Pelanggan</span>
-                    <i class="icon-people menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('distributor.index') }}">
-                    <span class="menu-title">Distributor List</span>
-                    <i class="icon-briefcase menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('metode_bayar.index') }}">
-                    <span class="menu-title">Jenis Pembayaran</span>
-                    <i class="icon-credit-card menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('jenis_pengiriman.index') }}">
-                    <span class="menu-title">Jenis Pengiriman</span>
-                    <i class="icon-cursor menu-icon"></i>
-                </a>
-            </li>
-
-        @elseif ($title === 'Karyawan')
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('karyawan.index') }}">
-                    <span class="menu-title">Dashboard</span>
-                    <i class="icon-speedometer menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('penjualan.index') }}">
-                    <span class="menu-title">Daftar Paket</span>
-                    <i class="icon-basket menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('pengiriman.index') }}">
-                    <span class="menu-title">Tambah Pengiriman</span>
-                    <i class="icon-cursor menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('kontak.index') }}">
-                    <span class="menu-title">Pesan Masuk</span>
-                    <i class="icon-envelope menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('stok_obat.index') }}">
-                    <span class="menu-title">Stok Obat</span>
-                    <i class="icon-plus menu-icon"></i>
-                </a>
-            </li>
-
-        @elseif ($title === 'Kasir')
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('kasir.index') }}">
-                    <span class="menu-title">Dashboard</span>
-                    <i class="icon-home menu-icon"></i>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('jual.create') }}">
-                    <span class="menu-title">Kasir Penjualan</span>
-                    <i class="icon-wallet menu-icon"></i>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('konfirmasi.index') }}">
-                    <span class="menu-title">Konfirmasi Paket</span>
-                    <i class="icon-basket menu-icon"></i>
-                </a>
-            </li>
-
+            <img class="bph-sidebar-avatar" src="{{ asset('back-end/pht/admin.jpg') }}" alt="avatar">
         @elseif ($title === 'Apoteker')
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('apoteker.index') }}">
-                    <span class="menu-title">Dashboard</span>
-                    <i class="icon-grid menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('obat.index') }}">
-                    <span class="menu-title">Penambahan Obat</span>
-                    <i class="icon-plus menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('jenis_obat.index') }}">
-                    <span class="menu-title">Jenis Obat</span>
-                    <i class="icon-list menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('pembelian.index') }}">
-                    <span class="menu-title">Pembelian Obat</span>
-                    <i class="icon-bag menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('detail_pembelian.index') }}">
-                    <span class="menu-title">Detail Pembelian Obat</span>
-                    <i class="icon-note menu-icon"></i>
-                </a>
-            </li>
-
-        @else {{-- Pemilik --}}
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('pemilik.index') }}">
-                    <span class="menu-title">Dashboard</span>
-                    <i class="icon-grid menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('report.index') }}">
-                    <span class="menu-title">Report</span>
-                    <i class="icon-doc menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('laporan-jual.index') }}">
-                    <span class="menu-title">Laporan Penjualan</span>
-                    <i class="icon-chart menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('laporan-beli.index') }}">
-                    <span class="menu-title">Laporan Pembelian</span>
-                    <i class="icon-briefcase menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('laporan_kasir.index') }}">
-                    <span class="menu-title">Laporan Kasir</span>
-                    <i class="icon-note menu-icon"></i>
-                </a>
-            </li>
+            <img class="bph-sidebar-avatar" src="{{ asset('back-end/pht/apoteker.jpg') }}" alt="avatar">
+        @elseif ($title === 'Karyawan')
+            <img class="bph-sidebar-avatar" src="{{ asset('back-end/pht/karyawan.jpg') }}" alt="avatar">
+        @elseif ($title === 'Kasir')
+            <img class="bph-sidebar-avatar" src="{{ asset('back-end/pht/kasir.jpg') }}" alt="avatar">
+        @else
+            <img class="bph-sidebar-avatar" src="{{ asset('back-end/pht/owner.jpg') }}" alt="avatar">
         @endif
-    </ul>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+        <div style="min-width:0; flex:1;">
+            <div class="bph-sidebar-uname">{{ Auth::user()->name }}</div>
+            <div class="bph-sidebar-role">{{ Auth::user()->email }}</div>
+            <form action="{{ route('logout') }}" method="POST" style="margin:0;">
+                @csrf
+                <button type="submit" class="bph-sidebar-logout-btn">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Nav Items -->
+    <div class="bph-nav-scroll">
+        <div class="bph-nav-section-label">Navigasi</div>
+        <ul class="bph-nav-list">
+
+            @if ($title === 'Admin')
+                <li>
+                    <a class="bph-nav-link" href="{{ route('admin.index') }}">
+                        <i class="bi bi-speedometer2 bph-nav-icon"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="bph-nav-link" href="{{ route('users.index') }}">
+                        <i class="bi bi-shield-lock bph-nav-icon"></i>
+                        <span>Hak Akses Users</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="bph-nav-link" href="{{ route('costumer.index') }}">
+                        <i class="bi bi-people bph-nav-icon"></i>
+                        <span>User Pelanggan</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="bph-nav-link" href="{{ route('distributor.index') }}">
+                        <i class="bi bi-truck bph-nav-icon"></i>
+                        <span>Distributor List</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="bph-nav-link" href="{{ route('metode_bayar.index') }}">
+                        <i class="bi bi-credit-card-2-front bph-nav-icon"></i>
+                        <span>Jenis Pembayaran</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="bph-nav-link" href="{{ route('jenis_pengiriman.index') }}">
+                        <i class="bi bi-send bph-nav-icon"></i>
+                        <span>Jenis Pengiriman</span>
+                    </a>
+                </li>
+
+            @elseif ($title === 'Karyawan')
+                <li>
+                    <a class="bph-nav-link" href="{{ route('karyawan.index') }}">
+                        <i class="bi bi-speedometer2 bph-nav-icon"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="bph-nav-link" href="{{ route('penjualan.index') }}">
+                        <i class="bi bi-bag-check bph-nav-icon"></i>
+                        <span>Daftar Paket</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="bph-nav-link" href="{{ route('pengiriman.index') }}">
+                        <i class="bi bi-send bph-nav-icon"></i>
+                        <span>Tambah Pengiriman</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="bph-nav-link" href="{{ route('kontak.index') }}">
+                        <i class="bi bi-envelope-open bph-nav-icon"></i>
+                        <span>Pesan Masuk</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="bph-nav-link" href="{{ route('stok_obat.index') }}">
+                        <i class="bi bi-capsule bph-nav-icon"></i>
+                        <span>Stok Obat</span>
+                    </a>
+                </li>
+
+            @elseif ($title === 'Kasir')
+                <li>
+                    <a class="bph-nav-link" href="{{ route('kasir.index') }}">
+                        <i class="bi bi-speedometer2 bph-nav-icon"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="bph-nav-link" href="{{ route('jual.create') }}">
+                        <i class="bi bi-cash-register bph-nav-icon"></i>
+                        <span>Kasir Penjualan</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="bph-nav-link" href="{{ route('konfirmasi.index') }}">
+                        <i class="bi bi-bag-check bph-nav-icon"></i>
+                        <span>Konfirmasi Paket</span>
+                    </a>
+                </li>
+
+            @elseif ($title === 'Apoteker')
+                <li>
+                    <a class="bph-nav-link" href="{{ route('apoteker.index') }}">
+                        <i class="bi bi-speedometer2 bph-nav-icon"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="bph-nav-link" href="{{ route('obat.index') }}">
+                        <i class="bi bi-plus-circle bph-nav-icon"></i>
+                        <span>Penambahan Obat</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="bph-nav-link" href="{{ route('jenis_obat.index') }}">
+                        <i class="bi bi-list-ul bph-nav-icon"></i>
+                        <span>Jenis Obat</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="bph-nav-link" href="{{ route('pembelian.index') }}">
+                        <i class="bi bi-cart3 bph-nav-icon"></i>
+                        <span>Pembelian Obat</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="bph-nav-link" href="{{ route('detail_pembelian.index') }}">
+                        <i class="bi bi-file-earmark-text bph-nav-icon"></i>
+                        <span>Detail Pembelian</span>
+                    </a>
+                </li>
+
+            @else {{-- Pemilik --}}
+                <li>
+                    <a class="bph-nav-link" href="{{ route('pemilik.index') }}">
+                        <i class="bi bi-speedometer2 bph-nav-icon"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="bph-nav-link" href="{{ route('report.index') }}">
+                        <i class="bi bi-file-earmark-bar-graph bph-nav-icon"></i>
+                        <span>Report</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="bph-nav-link" href="{{ route('laporan-jual.index') }}">
+                        <i class="bi bi-graph-up-arrow bph-nav-icon"></i>
+                        <span>Laporan Penjualan</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="bph-nav-link" href="{{ route('laporan-beli.index') }}">
+                        <i class="bi bi-graph-down-arrow bph-nav-icon"></i>
+                        <span>Laporan Pembelian</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="bph-nav-link" href="{{ route('laporan_kasir.index') }}">
+                        <i class="bi bi-receipt bph-nav-icon"></i>
+                        <span>Laporan Kasir</span>
+                    </a>
+                </li>
+            @endif
+
+        </ul>
+    </div>
+
+    <div class="bph-sidebar-footer">
+        BioPharm &copy; {{ date('Y') }}
+    </div>
 </nav>

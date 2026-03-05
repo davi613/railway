@@ -9,182 +9,162 @@
 @endsection
 
 @section('content')
-<div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="col-12">
-            <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 text-dark">
-                        <i class="bi bi-credit-card-2-back me-2 text-success"></i>
-                        Daftar Metode Pembayaran
-                    </h5>
-                    <a href="{{ route('metode_bayar.create') }}" class="btn btn-success btn-sm d-flex align-items-center">
-                        <i class="bi bi-plus-circle me-1"></i> Tambah Metode
-                    </a>
-                </div>
 
-                <div class="card-body">
-                <div class="row mb-3">
-    <div class="col-md-6">
-        <form method="GET" action="{{ route('metode_bayar.index') }}" class="d-flex">
-            <input type="text" name="search" value="{{ request('search') }}" class="form-control rounded-start-pill border-success" placeholder="Cari metode pembayaran...">
-            <button type="submit" class="btn btn-success rounded-end-pill ms-1">
-                <i class="bi bi-search me-1"></i> Cari
+<div class="bph-page-head">
+    <div>
+        <h1 class="bph-page-title">Jenis Pembayaran</h1>
+        <div class="bph-breadcrumb">
+            <a href="{{ route('admin.index') }}"><i class="bi bi-house-fill"></i> Dashboard</a>
+            <span class="sep">/</span>
+            <span>Jenis Pembayaran</span>
+        </div>
+    </div>
+    <a href="{{ route('metode_bayar.create') }}" class="bph-btn bph-btn-primary">
+        <i class="bi bi-plus-circle-fill"></i> Tambah Metode
+    </a>
+</div>
+
+<div class="bph-card">
+    <div class="bph-card-head">
+        <div class="bph-card-title">
+            <i class="bi bi-credit-card-2-front-fill"></i>
+            Daftar Metode Pembayaran
+        </div>
+        <form method="GET" action="{{ route('metode_bayar.index') }}" style="display:flex; gap:8px;">
+            <div class="bph-search">
+                <i class="bi bi-search bph-search-icon"></i>
+                <input type="text" name="search" class="bph-search-input"
+                    placeholder="Cari metode..." value="{{ request('search') }}">
+            </div>
+            <button type="submit" class="bph-btn bph-btn-primary bph-btn-sm">
+                <i class="bi bi-search"></i> Cari
             </button>
         </form>
     </div>
+
+    <div class="bph-card-body-flush">
+        <div class="bph-table-scroll">
+            <table class="bph-table">
+                <thead>
+                    <tr>
+                        <th style="text-align:center;">Aksi</th>
+                        <th style="text-align:center;">No</th>
+                        <th>Metode Pembayaran</th>
+                        <th>Tempat Bayar</th>
+                    
+                        <th style="text-align:center;">Logo</th>
+                        <th>Dibuat</th>
+                        <th>Diperbarui</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($metodeBayars as $no => $item)
+                        <tr>
+                            <td style="text-align:center;">
+                                <div style="display:flex; gap:6px; justify-content:center;">
+                                    <a href="{{ route('metode_bayar.edit', $item->id) }}"
+                                        class="bph-btn bph-btn-primary bph-btn-sm bph-btn-ico" title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <button type="button"
+                                        class="bph-btn bph-btn-danger bph-btn-sm bph-btn-ico" title="Hapus"
+                                        onclick="bphConfirmDelete({{ $item->id }})">
+                                        <i class="bi bi-trash3-fill"></i>
+                                    </button>
+                                    <form id="del-{{ $item->id }}" action="{{ route('metode_bayar.destroy', $item->id) }}" method="POST" style="display:none;">
+                                        @csrf @method('DELETE')
+                                    </form>
+                                </div>
+                            </td>
+                            <td style="text-align:center; font-weight:800;">{{ $metodeBayars->firstItem() + $no }}</td>
+                            <td style="font-weight:700;">{{ $item->metode_pembayaran }}</td>
+                            <td>{{ $item->tempat_bayar }}</td>
+                            {{-- <td style="font-family:monospace; font-size:0.82rem;">{{ $item->no_rekening ?? '—' }}</td> --}}
+                            <td style="text-align:center;">
+                                @if ($item->url_logo)
+                                    <img src="{{ asset('storage/' . $item->url_logo) }}" alt="Logo"
+                                        style="width:44px; height:44px; object-fit:contain; border-radius:8px; border:1px solid var(--bph-border); padding:4px; cursor:pointer; background:#fff;"
+                                        data-bs-toggle="modal" data-bs-target="#bphLogoModal"
+                                        data-logo="{{ asset('storage/' . $item->url_logo) }}"
+                                        data-name="{{ $item->metode_pembayaran }}">
+                                @else
+                                    <span style="color:var(--bph-muted);">—</span>
+                                @endif
+                            </td>
+                            <td style="font-size:0.79rem; color:var(--bph-muted);">{{ \Carbon\Carbon::parse($item->created_at)->format('d-m-Y H:i') }}</td>
+                            <td style="font-size:0.79rem; color:var(--bph-muted);">{{ \Carbon\Carbon::parse($item->updated_at)->format('d-m-Y H:i') }}</td>
+                        </tr>
+                    @endforeach
+
+                    @if ($metodeBayars->isEmpty())
+                        <tr>
+                            <td colspan="8">
+                                <div class="bph-empty">
+                                    <i class="bi bi-credit-card-2-front"></i>
+                                    <p>Belum ada data metode pembayaran.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
+        </div>
+
+        @if ($metodeBayars->hasPages())
+            <div class="bph-pagination">
+                @if ($metodeBayars->onFirstPage())
+                    <span class="bph-page-btn disabled"><i class="bi bi-chevron-left"></i> Prev</span>
+                @else
+                    <a class="bph-page-btn" href="{{ $metodeBayars->previousPageUrl() }}&search={{ request('search') }}"><i class="bi bi-chevron-left"></i> Prev</a>
+                @endif
+                @if ($metodeBayars->hasMorePages())
+                    <a class="bph-page-btn" href="{{ $metodeBayars->nextPageUrl() }}&search={{ request('search') }}">Next <i class="bi bi-chevron-right"></i></a>
+                @else
+                    <span class="bph-page-btn disabled">Next <i class="bi bi-chevron-right"></i></span>
+                @endif
+            </div>
+        @endif
+    </div>
 </div>
 
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover align-middle text-center">
-                            <thead class="table-light text-uppercase text-secondary">
-                                <tr>
-                                    <th>Aksi</th>
-                                    <th>No</th>
-                                    <th><i class="bi bi-wallet2 me-1"></i>Metode</th>
-                                    <th><i class="bi bi-shop me-1"></i>Tempat Bayar</th>
-                                    <th><i class="bi bi-hash me-1"></i>No. Rekening</th>
-                                    <th><i class="bi bi-image me-1"></i>Logo</th>
-                                    <th><i class="bi bi-calendar-plus me-1"></i>Dibuat</th>
-                                    <th><i class="bi bi-calendar-check me-1"></i>Diperbarui</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($metodeBayars as $no => $item)
-                                    <tr>
-                                        <td>
-                                            <div class="btn-group">
-                                            <a style="background-color:orange; color:white;" href="{{ route('metode_bayar.edit', $item->id) }}" class="btn btn-outline-warning btn-sm me-1" title="Edit">
-                                                <i class="bi bi-pencil-square">Edit</i>
-                                            </a>
-                                            <button style="background-color:red; color:white;" type="button" class="btn btn-outline-danger btn-sm" title="Hapus" onclick="confirmDelete({{ $item->id }})">
-                                                <i class="bi bi-trash3">Hapus</i>
-                                            </button>
-                                            <form id="delete-form-{{ $item->id }}" action="{{ route('metode_bayar.destroy', $item->id) }}" method="POST" style="display: none;">
-                                                @csrf
-                                                @method('DELETE')
-                                            </form>
-                                        </div>
-                                        </td>
-                                        {{-- <td>{{ $no + 1 }}</td> --}}
-                                        <td>{{ $metodeBayars->firstItem() + $no }}</td>
-
-                                        <td class="text-start">{{ $item->metode_pembayaran }}</td>
-                                        <td>{{ $item->tempat_bayar }}</td>
-                                        <td>{{ $item->no_rekening ?? '-' }}</td>
-                                        <td>
-                                            @if ($item->url_logo)
-                                                <img src="{{ asset('storage/' . $item->url_logo) }}" alt="Logo" class="img-thumbnail rounded" style="width: 50px; cursor: pointer;" 
-                                                    data-bs-toggle="modal" data-bs-target="#logoModal" 
-                                                    data-logo="{{ asset('storage/' . $item->url_logo) }}" 
-                                                    data-name="{{ $item->metode_pembayaran }}">
-                                            @else
-                                                <span class="text-muted">-</span>
-                                            @endif
-                                        </td>
-                                        <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d-m-Y H:i') }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($item->updated_at)->format('d-m-Y H:i') }}</td>
-                                    </tr>
-                                @endforeach
-
-                                @if ($metodeBayars->isEmpty())
-                                    <tr>
-                                        <td colspan="8" class="text-center text-muted">
-                                            <i class="bi bi-info-circle me-1"></i> Belum ada data metode pembayaran.
-                                        </td>
-                                    </tr>
-                                @endif
-                            </tbody>
-                            
-                        </table>
-                        
-                    </div>
-                    {{-- Pagination --}}
-@if ($metodeBayars->hasPages())
-    <div class="d-flex justify-content-center mt-4">
-        <nav>
-            <ul class="pagination mb-0">
-                {{-- Tombol Previous --}}
-                @if ($metodeBayars->onFirstPage())
-                    <li class="page-item disabled">
-                        <span class="page-link">Previous</span>
-                    </li>
-                @else
-                    <li class="page-item">
-                        <a class="page-link" href="{{ $metodeBayars->previousPageUrl() }}&search={{ request('search') }}">Previous</a>
-                    </li>
-                @endif
-
-                {{-- Tombol Next --}}
-                @if ($metodeBayars->hasMorePages())
-                    <li class="page-item">
-                        <a class="page-link" href="{{ $metodeBayars->nextPageUrl() }}&search={{ request('search') }}">Next</a>
-                    </li>
-                @else
-                    <li class="page-item disabled">
-                        <span class="page-link">Next</span>
-                    </li>
-                @endif
-            </ul>
-        </nav>
-    </div>
-@endif
-
-                </div>
+<!-- Logo Preview Modal -->
+<div class="modal fade" id="bphLogoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="border-radius:14px; border:none; overflow:hidden;">
+            <div class="modal-header" style="background:var(--bph-orange); border:none; padding:16px 20px;">
+                <h5 class="modal-title" id="bphLogoModalTitle" style="color:#fff; font-weight:800; margin:0;"></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="text-align:center; padding:32px; background:var(--bph-bg);">
+                <img src="" id="bphLogoPreview" alt="Logo"
+                    style="max-height:60vh; max-width:100%; object-fit:contain; border-radius:10px;">
             </div>
         </div>
     </div>
 </div>
 
-{{-- Modal untuk preview gambar logo --}}
-<div class="modal fade" id="logoModal" tabindex="-1" aria-labelledby="logoModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content rounded-4">
-      <div class="modal-header border-0">
-        <h5 class="modal-title" id="logoModalLabel"></h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body text-center">
-        <img src="" alt="Logo Preview" id="logoPreview" class="img-fluid rounded" style="max-height: 70vh; object-fit: contain;">
-      </div>
-    </div>
-  </div>
-</div>
-
-{{-- SweetAlert2 --}}
-<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
-    function confirmDelete(id) {
-        Swal.fire({
-            title: 'Yakin ingin menghapus?',
-            text: "Data ini akan hilang secara permanen.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, Hapus!',
-            cancelButtonText: 'Batal',
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#6c757d',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('delete-form-' + id).submit();
-            }
-        });
-    }
+function bphConfirmDelete(id) {
+    Swal.fire({
+        title: 'Hapus Metode Pembayaran?',
+        text: 'Data ini akan dihapus secara permanen.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#EF4444',
+        cancelButtonColor: '#F97316'
+    }).then(r => { if (r.isConfirmed) document.getElementById('del-' + id).submit(); });
+}
 
-    // Script untuk modal preview gambar logo
-    var logoModal = document.getElementById('logoModal');
-    logoModal.addEventListener('show.bs.modal', function (event) {
-      var img = event.relatedTarget; // gambar yang diklik
-      var logoSrc = img.getAttribute('data-logo');
-      var metodeName = img.getAttribute('data-name');
-      var modalTitle = logoModal.querySelector('.modal-title');
-      var modalImage = logoModal.querySelector('#logoPreview');
-
-      modalTitle.textContent = metodeName;
-      modalImage.src = logoSrc;
-      modalImage.alt = 'Logo ' + metodeName;
+var bphModal = document.getElementById('bphLogoModal');
+if (bphModal) {
+    bphModal.addEventListener('show.bs.modal', function (e) {
+        var img = e.relatedTarget;
+        document.getElementById('bphLogoModalTitle').textContent = img.getAttribute('data-name');
+        document.getElementById('bphLogoPreview').src = img.getAttribute('data-logo');
     });
+}
 </script>
 @endsection

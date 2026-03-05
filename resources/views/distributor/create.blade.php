@@ -9,64 +9,71 @@
 @endsection
 
 @section('content')
-<div class="container-fluid pt-4 px-4">
-    <div class="row justify-content-center">
-        <div class="col-md-10 col-lg-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="bi bi-plus-circle me-2"></i>Tambah Distributor Baru
-                    </h5>
-                    {{-- <a href="{{ route('distributor.index') }}" class="btn btn-outline-light btn-sm">
-                        <i class="bi bi-arrow-left me-1"></i>Kembali
-                    </a> --}}
-                </div>
-                <div class="card-body">
-                    <form action="{{ route('distributor.store') }}" method="POST">
-                        @csrf
 
-                        <div class="mb-3">
-                            <label for="nama_distributor" class="form-label fw-semibold">Nama Distributor <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="nama_distributor" name="nama_distributor" 
-                                value="{{ old('nama_distributor') }}" required placeholder="Masukkan nama distributor">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="telepon" class="form-label fw-semibold">Telepon <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control" id="telepon" name="telepon"
-                                value="{{ old('telepon') }}" required pattern="\d{8,15}" 
-                                maxlength="15" title="Masukkan 8-15 digit angka" placeholder="081234567890">
-                            <div class="form-text">Harus angka (8-15 digit)</div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="alamat" class="form-label fw-semibold">Alamat <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="alamat" name="alamat" rows="3" required placeholder="Masukkan alamat lengkap">{{ old('alamat') }}</textarea>
-                        </div>
-
-                        <div class="text-end mt-4">
-                            <a style="background-color:orange;" href="{{ route('distributor.index') }}" class="btn btn-secondary">
-                                <i class="bi bi-x-circle me-1"></i>Batal
-                            </a>
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-save me-1"></i>Simpan
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+<div class="bph-page-head">
+    <div>
+        <h1 class="bph-page-title">Tambah Distributor</h1>
+        <div class="bph-breadcrumb">
+            <a href="{{ route('admin.index') }}"><i class="bi bi-house-fill"></i> Dashboard</a>
+            <span class="sep">/</span>
+            <a href="{{ route('distributor.index') }}">Distributor</a>
+            <span class="sep">/</span>
+            <span>Tambah</span>
         </div>
     </div>
+    <a href="{{ route('distributor.index') }}" class="bph-btn bph-btn-outline">
+        <i class="bi bi-arrow-left"></i> Kembali
+    </a>
 </div>
-@endsection
 
-@section('scripts')
+<div class="bph-card" style="max-width:680px;">
+    <div class="bph-card-head">
+        <div class="bph-card-title">
+            <i class="bi bi-plus-circle-fill"></i>
+            Form Tambah Distributor
+        </div>
+    </div>
+    <div class="bph-card-body">
+        <form action="{{ route('distributor.store') }}" method="POST">
+            @csrf
+
+            <div class="bph-form-group">
+                <label class="bph-label" for="nama_distributor">Nama Distributor <span class="req">*</span></label>
+                <input type="text" class="bph-input" id="nama_distributor" name="nama_distributor"
+                    value="{{ old('nama_distributor') }}" required placeholder="Masukkan nama distributor">
+            </div>
+
+            <div class="bph-form-group">
+                <label class="bph-label" for="telepon">Telepon <span class="req">*</span></label>
+                <input type="number" class="bph-input" id="telepon" name="telepon"
+                    value="{{ old('telepon') }}" required maxlength="15"
+                    placeholder="081234567890">
+                <div class="bph-form-hint">Harus angka 8–15 digit.</div>
+            </div>
+
+            <div class="bph-form-group">
+                <label class="bph-label" for="alamat">Alamat <span class="req">*</span></label>
+                <textarea class="bph-textarea" id="alamat" name="alamat" rows="3" required
+                    placeholder="Masukkan alamat lengkap">{{ old('alamat') }}</textarea>
+            </div>
+
+            <div class="bph-form-divider"></div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <a href="{{ route('distributor.index') }}" class="bph-btn bph-btn-outline">
+                    <i class="bi bi-x-circle"></i> Batal
+                </a>
+                <button type="submit" class="bph-btn bph-btn-primary">
+                    <i class="bi bi-check-circle-fill"></i> Simpan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
-    document.getElementById('telepon').addEventListener('input', function (e) {
-        this.value = this.value.replace(/[^0-9]/g, '');
-        if (this.value.length > 15) {
-            this.value = this.value.slice(0, 15);
-        }
-    });
+document.getElementById('telepon').addEventListener('input', function () {
+    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15);
+});
 </script>
 @endsection

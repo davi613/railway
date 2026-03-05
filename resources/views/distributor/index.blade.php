@@ -9,145 +9,128 @@
 @endsection
 
 @section('content')
-<div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="col-12">
-            <div class="bg-white rounded-3 shadow p-4">
-                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
 
-                    <div>
-                        <h3 class="fw-bold text-purple mb-1">
-                            <i class="bi bi-truck me-2"></i>Manajemen Distributor
-                        </h3>
-                        <p class="text-muted small mb-0">Kelola data distributor dengan mudah dan cepat</p>
-                    </div>
-                    <a href="{{ route('distributor.create') }}" class="btn btn-success btn-sm px-3 py-2 shadow-sm">
-                        <i class="bi bi-plus-circle me-2"></i>Tambah Distributor
-                    </a>
-
-                    <form action="{{ route('distributor.index') }}" method="GET" class="d-flex align-items-center ms-3" style="max-width: 300px;">
-                        <div class="input-group shadow-sm">
-                            <input type="text" name="search" class="form-control border-success" placeholder="Cari distributor..." value="{{ request('search') }}">
-                            <button class="btn btn-success px-3" type="submit">
-                                <i class="bi bi-search me-1"></i> Cari
-                            </button>
-                        </div>
-                    </form>
-
-
-                </div>
-
-                <div class="table-responsive">
-                    <table class="table table-bordered align-middle text-center">
-                        <thead style="background-color:#e0d7f5;" class="text-dark">
-                            <tr>
-                                <th>Aksi</th>
-                                <th>No.</th>
-                                <th>Nama Distributor</th>
-                                <th>Telepon</th>
-                                <th class="text-start">Alamat</th>
-                                <th>Dibuat</th>
-                                <th>Terakhir Diupdate</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($distributors as $no => $distributor)
-                                <tr>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a style="background-color:orange; color:white;" href="{{ route('distributor.edit', $distributor->id) }}" class="btn btn-outline-warning btn-sm me-1" title="Edit">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </a>
-                                            <button style="background-color:red; color:white;" type="button" class="btn btn-outline-danger btn-sm" title="Hapus" onclick="confirmDelete({{ $distributor->id }})">
-                                                <i class="bi bi-trash3"></i>
-                                            </button>
-                                            <form id="delete-form-{{ $distributor->id }}" action="{{ route('distributor.destroy', $distributor->id) }}" method="POST" style="display: none;">
-                                                @csrf
-                                                @method('DELETE')
-                                            </form>
-                                        </div>
-                                    </td>
-                                    {{-- <td>{{ $no + 1 }}</td> --}}
-                                    <td>{{ $distributors->firstItem() + $no }}</td>
-
-                                    <td class="fw-semibold text-capitalize">{{ $distributor->nama_distributor }}</td>
-                                    <td>
-                                        <span class="badge bg-light text-dark border">
-                                            <i class="bi bi-telephone me-1"></i>{{ $distributor->telepon }}
-                                        </span>
-                                    </td>
-                                    <td class="text-start">{{ $distributor->alamat }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($distributor->created_at)->format('d M Y H:i') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($distributor->updated_at)->format('d M Y H:i') }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="7" class="text-muted py-4">
-                                        <i class="bi bi-box-seam fs-3 text-secondary"></i><br>
-                                        Belum ada data distributor yang tersedia.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                    @if ($distributors->hasPages())
-    <div class="d-flex justify-content-center mt-3">
-        <ul class="pagination">
-            {{-- Tombol Previous --}}
-            @if ($distributors->onFirstPage())
-                <li class="page-item disabled">
-                    <span class="page-link">Previous</span>
-                </li>
-            @else
-                <li class="page-item">
-                    <a class="page-link" href="{{ $distributors->previousPageUrl() }}&search={{ request('search') }}" rel="prev">Previous</a>
-                </li>
-            @endif
-
-            {{-- Tombol Next --}}
-            @if ($distributors->hasMorePages())
-                <li class="page-item">
-                    <a class="page-link" href="{{ $distributors->nextPageUrl() }}&search={{ request('search') }}" rel="next">Next</a>
-                </li>
-            @else
-                <li class="page-item disabled">
-                    <span class="page-link">Next</span>
-                </li>
-            @endif
-        </ul>
-    </div>
-@endif
-
-                </div>
-
-            </div>
+<div class="bph-page-head">
+    <div>
+        <h1 class="bph-page-title">Manajemen Distributor</h1>
+        <div class="bph-breadcrumb">
+            <a href="{{ route('admin.index') }}"><i class="bi bi-house-fill"></i> Dashboard</a>
+            <span class="sep">/</span>
+            <span>Distributor</span>
         </div>
+    </div>
+    <a href="{{ route('distributor.create') }}" class="bph-btn bph-btn-primary">
+        <i class="bi bi-plus-circle-fill"></i> Tambah Distributor
+    </a>
+</div>
+
+<div class="bph-card">
+    <div class="bph-card-head">
+        <div class="bph-card-title">
+            <i class="bi bi-truck"></i>
+            Daftar Distributor
+        </div>
+        <form action="{{ route('distributor.index') }}" method="GET" style="display:flex; gap:8px;">
+            <div class="bph-search">
+                <i class="bi bi-search bph-search-icon"></i>
+                <input type="text" name="search" class="bph-search-input"
+                    placeholder="Cari distributor..." value="{{ request('search') }}">
+            </div>
+            <button type="submit" class="bph-btn bph-btn-primary bph-btn-sm">
+                <i class="bi bi-search"></i> Cari
+            </button>
+        </form>
+    </div>
+
+    <div class="bph-card-body-flush">
+        <div class="bph-table-scroll">
+            <table class="bph-table">
+                <thead>
+                    <tr>
+                        <th style="text-align:center;">Aksi</th>
+                        <th style="text-align:center;">No.</th>
+                        <th>Nama Distributor</th>
+                        <th>Telepon</th>
+                        <th>Alamat</th>
+                        <th>Dibuat</th>
+                        <th>Diperbarui</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($distributors as $no => $distributor)
+                        <tr>
+                            <td style="text-align:center;">
+                                <div style="display:flex; gap:6px; justify-content:center;">
+                                    <a href="{{ route('distributor.edit', $distributor->id) }}"
+                                        class="bph-btn bph-btn-primary bph-btn-sm bph-btn-ico" title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <button type="button"
+                                        class="bph-btn bph-btn-danger bph-btn-sm bph-btn-ico" title="Hapus"
+                                        onclick="bphConfirmDelete({{ $distributor->id }})">
+                                        <i class="bi bi-trash3-fill"></i>
+                                    </button>
+                                    <form id="del-{{ $distributor->id }}" action="{{ route('distributor.destroy', $distributor->id) }}" method="POST" style="display:none;">
+                                        @csrf @method('DELETE')
+                                    </form>
+                                </div>
+                            </td>
+                            <td style="text-align:center; font-weight:800;">{{ $distributors->firstItem() + $no }}</td>
+                            <td style="font-weight:700; text-transform:capitalize;">{{ $distributor->nama_distributor }}</td>
+                            <td>
+                                <span class="bph-badge bph-badge-gray">
+                                    <i class="bi bi-telephone"></i> {{ $distributor->telepon }}
+                                </span>
+                            </td>
+                            <td style="font-size:0.82rem; color:var(--bph-muted); max-width:200px;">{{ $distributor->alamat }}</td>
+                            <td style="font-size:0.79rem; color:var(--bph-muted);">{{ \Carbon\Carbon::parse($distributor->created_at)->format('d M Y') }}</td>
+                            <td style="font-size:0.79rem; color:var(--bph-muted);">{{ \Carbon\Carbon::parse($distributor->updated_at)->format('d M Y') }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7">
+                                <div class="bph-empty">
+                                    <i class="bi bi-truck"></i>
+                                    <p>Belum ada data distributor.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        @if ($distributors->hasPages())
+            <div class="bph-pagination">
+                @if ($distributors->onFirstPage())
+                    <span class="bph-page-btn disabled"><i class="bi bi-chevron-left"></i> Prev</span>
+                @else
+                    <a class="bph-page-btn" href="{{ $distributors->previousPageUrl() }}&search={{ request('search') }}" rel="prev"><i class="bi bi-chevron-left"></i> Prev</a>
+                @endif
+                @if ($distributors->hasMorePages())
+                    <a class="bph-page-btn" href="{{ $distributors->nextPageUrl() }}&search={{ request('search') }}" rel="next">Next <i class="bi bi-chevron-right"></i></a>
+                @else
+                    <span class="bph-page-btn disabled">Next <i class="bi bi-chevron-right"></i></span>
+                @endif
+            </div>
+        @endif
     </div>
 </div>
 
-<!-- Bootstrap Icons -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-
-<!-- SweetAlert2 -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    function confirmDelete(id) {
-        Swal.fire({
-            title: 'Hapus Distributor?',
-            text: 'Data ini akan dihapus secara permanen!',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, Hapus!',
-            cancelButtonText: 'Batal',
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#6c757d',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('delete-form-' + id).submit();
-            }
-        });
-    }
+function bphConfirmDelete(id) {
+    Swal.fire({
+        title: 'Hapus Distributor?',
+        text: 'Data ini akan dihapus secara permanen!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#EF4444',
+        cancelButtonColor: '#F97316',
+        reverseButtons: true
+    }).then(result => { if (result.isConfirmed) document.getElementById('del-' + id).submit(); });
+}
 </script>
 @endsection

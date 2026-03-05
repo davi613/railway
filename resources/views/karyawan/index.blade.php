@@ -10,108 +10,68 @@
 
 @section('content')
 <style>
-    .welcome-box {
-        background: linear-gradient(135deg, #f6d365, #fda085);
-        padding: 30px;
-        border-radius: 15px;
-        color: #2c3e50;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        text-align: center;
-        margin-bottom: 40px;
-    }
+    .bph-page-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
+    .bph-page-title { font-size:1.55rem; font-weight:800; color:#1A1A2E; margin:0 0 4px 0; }
+    .bph-breadcrumb { font-size:0.82rem; color:#8A8FA8; display:flex; align-items:center; gap:6px; }
+    .bph-breadcrumb a { color:#F97316; text-decoration:none; font-weight:600; }
+    .bph-breadcrumb .sep { color:#CBD5E1; }
 
-    .welcome-box h2 {
-        font-size: 32px;
-        font-weight: 700;
-        margin-bottom: 10px;
+    .bph-welcome-hero {
+        background: linear-gradient(135deg, #1A1A2E 0%, #2D2D4E 50%, #F97316 100%);
+        border-radius: 20px; padding: 48px 40px; text-align: center;
+        margin-bottom: 32px; box-shadow: 0 8px 32px rgba(249,115,22,0.2);
+        position: relative; overflow: hidden;
     }
+    .bph-welcome-hero::before { content:''; position:absolute; top:-40px; right:-40px; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,0.08); }
+    .bph-welcome-hero::after { content:''; position:absolute; bottom:-30px; left:-30px; width:150px; height:150px; border-radius:50%; background:rgba(255,255,255,0.06); }
+    .bph-welcome-hero h2 { font-size:2rem; font-weight:800; color:#fff; margin-bottom:10px; position:relative; z-index:1; }
+    .bph-welcome-hero p { font-size:1.05rem; color:rgba(255,255,255,0.88); margin:0; position:relative; z-index:1; }
 
-    .welcome-box p {
-        font-size: 18px;
-    }
+    .bph-feature-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-bottom:24px; }
+    @media (max-width:900px) { .bph-feature-grid { grid-template-columns:repeat(2,1fr); } }
+    @media (max-width:580px) { .bph-feature-grid { grid-template-columns:1fr; } .bph-welcome-hero { padding:32px 20px; } .bph-welcome-hero h2 { font-size:1.4rem; } }
 
-    .card-feature {
-        background-color: #ffffff;
-        padding: 25px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-        text-align: center;
-        transition: all 0.3s ease;
-        margin-bottom: 20px;
-    }
+    .bph-feat-card { background:#fff; border-radius:16px; padding:32px 24px; text-align:center; box-shadow:0 4px 18px rgba(249,115,22,0.08); border:1.5px solid #FEE2CA; transition:transform 0.25s ease, box-shadow 0.25s ease; opacity:0; transform:translateY(24px); animation:bphFadeUp 0.5s forwards; }
+    .bph-feat-card:hover { transform:translateY(-6px); box-shadow:0 12px 32px rgba(249,115,22,0.16); }
+    .bph-feat-icon { width:68px; height:68px; border-radius:50%; background:linear-gradient(135deg,#FFF7ED,#FDBA74); display:flex; align-items:center; justify-content:center; margin:0 auto 18px; font-size:2rem; color:#F97316; box-shadow:0 4px 14px rgba(249,115,22,0.15); }
+    .bph-feat-card h5 { font-size:1.05rem; font-weight:700; color:#1A1A2E; margin-bottom:8px; }
+    .bph-feat-card p { font-size:0.88rem; color:#64748B; margin:0; line-height:1.6; }
 
-    .card-feature:hover {
-        transform: translateY(-5px);
-    }
-
-    .card-feature i {
-        font-size: 36px;
-        color: #e67e22;
-        margin-bottom: 15px;
-    }
-
-    .card-feature h5 {
-        font-weight: 600;
-        color: #2c3e50;
-        margin-bottom: 10px;
-    }
-
-    .card-feature p {
-        color: #7f8c8d;
-        font-size: 14px;
-    }
-
-    .fade-in {
-        opacity: 0;
-        transform: translateY(20px);
-        animation: fadeInUp 0.5s forwards;
-    }
-
-    @keyframes fadeInUp {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+    @keyframes bphFadeUp { to { opacity:1; transform:translateY(0); } }
 </style>
 
-<div class="container-fluid pt-4 px-4">
-    <div class="welcome-box fade-in">
-        <h2>Selamat Datang, Karyawan</h2>
-        <p>"Bersama kita capai keberhasilan dengan kolaborasi dan dedikasi."</p>
-    </div>
-
-    <div class="row g-4">
-        <div class="col-md-4 fade-in">
-            <div class="card-feature">
-                <i class="fas fa-tasks"></i>
-                <h5>Tugas Harian</h5>
-                <p>Kelola dan laksanakan tugas harian secara efisien.</p>
-            </div>
-        </div>
-        <div class="col-md-4 fade-in">
-            <div class="card-feature">
-                <i class="fas fa-comments"></i>
-                <h5>Kolaborasi Tim</h5>
-                <p>Bina komunikasi yang efektif dan sinergis antar rekan kerja.</p>
-            </div>
-        </div>
-        <div class="col-md-4 fade-in">
-            <div class="card-feature">
-                <i class="fas fa-comments"></i>
-                <h5>Kinerja Terukur</h5>
-                <p>Analisa kinerja dan raih target dengan strategi terbaik.</p>
-            </div>
+<div class="bph-page-head">
+    <div>
+        <h1 class="bph-page-title">Dashboard Karyawan</h1>
+        <div class="bph-breadcrumb">
+            <i class="bi bi-house-fill"></i>
+            <span>Dashboard</span>
+            <span class="sep">/</span>
+            <span>Karyawan</span>
         </div>
     </div>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const fadeInElements = document.querySelectorAll('.fade-in');
-        fadeInElements.forEach((el, index) => {
-            el.style.animationDelay = `${index * 0.2}s`;
-        });
-    });
-</script>
+<div class="bph-welcome-hero">
+    <h2><i class="bi bi-person-badge me-2"></i>Selamat Datang, Karyawan</h2>
+    <p>"Bersama kita capai keberhasilan dengan kolaborasi dan dedikasi."</p>
+</div>
+
+<div class="bph-feature-grid">
+    <div class="bph-feat-card" style="animation-delay:0.1s;">
+        <div class="bph-feat-icon"><i class="bi bi-check2-square"></i></div>
+        <h5>Tugas Harian</h5>
+        <p>Kelola dan laksanakan tugas harian secara efisien.</p>
+    </div>
+    <div class="bph-feat-card" style="animation-delay:0.25s;">
+        <div class="bph-feat-icon"><i class="bi bi-chat-dots-fill"></i></div>
+        <h5>Kolaborasi Tim</h5>
+        <p>Bina komunikasi yang efektif dan sinergis antar rekan kerja.</p>
+    </div>
+    <div class="bph-feat-card" style="animation-delay:0.4s;">
+        <div class="bph-feat-icon"><i class="bi bi-graph-up-arrow"></i></div>
+        <h5>Kinerja Terukur</h5>
+        <p>Analisa kinerja dan raih target dengan strategi terbaik.</p>
+    </div>
+</div>
 @endsection

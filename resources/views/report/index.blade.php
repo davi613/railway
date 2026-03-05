@@ -10,273 +10,187 @@
 @section('content')
 
 <style>
-    #loadingOverlay {
-        display: none;
-        position: fixed;
-        z-index: 9999;
-        background: rgba(255, 255, 255, 0.9);
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-    }
+    .bph-page-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
+    .bph-page-title { font-size:1.55rem; font-weight:800; color:#1A1A2E; margin:0 0 4px 0; }
+    .bph-breadcrumb { font-size:0.82rem; color:#8A8FA8; display:flex; align-items:center; gap:6px; }
+    .bph-breadcrumb a { color:#F97316; text-decoration:none; font-weight:600; }
+    .bph-breadcrumb .sep { color:#CBD5E1; }
 
-    #loadingOverlay img {
-        width: 120px;
-        height: 120px;
-    }
+    .bph-report-card-outer { background:#fff; border-radius:18px; box-shadow:0 4px 24px rgba(30,30,60,0.08); border:1.5px solid #F1F5F9; margin-bottom:28px; overflow:hidden; }
+    .bph-report-card-head { padding:20px 28px; border-bottom:1.5px solid #F1F5F9; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+    .bph-report-card-title { font-size:1.05rem; font-weight:700; color:#1A1A2E; display:flex; align-items:center; gap:9px; }
+    .bph-report-card-title i { color:#F97316; }
+    .bph-report-card-body { padding:28px; }
 
-    #loadingText {
-        font-size: 18px;
-        font-weight: bold;
-        margin-top: 15px;
-        color: #555;
-    }
-
-    /* ===== CARD WRAPPER GRID ===== */
-    .report-inner-cards-wrapper {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 24px;
-        justify-content: space-between;
-        margin-top: 1rem;
-    }
-
-    /* ===== SINGLE CARD ===== */
-    .report-inner-card {
+    .bph-report-grid { display:flex; flex-wrap:wrap; gap:24px; }
+    .bph-report-inner {
         background: #fff;
         border-radius: 16px;
-        padding: 24px 32px;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        padding: 24px 28px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+        border: 1.5px solid #F1F5F9;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        flex: 1 1 calc(50% - 24px); /* 2 cards per row, with gap */
-        min-width: 300px;
-        cursor: default;
+        flex: 1 1 calc(50% - 24px);
+        min-width: 280px;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
+    @media (max-width:768px) { .bph-report-inner { flex: 1 1 100%; } }
+    .bph-report-inner:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.12); }
 
-    @media (max-width: 768px) {
-        .report-inner-card {
-            flex: 1 1 100%; /* full width on smaller screens */
-        }
-    }
+    .bph-report-text { max-width: 70%; }
+    .bph-report-label { font-size:0.75rem; font-weight:700; color:#94A3B8; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; display:block; }
+    .bph-report-value { font-size:1.85rem; font-weight:800; color:#1A1A2E; margin-bottom:8px; line-height:1.1; }
+    .bph-report-value.text-danger { color:#EF4444; }
+    .bph-report-value.text-success { color:#16A34A; }
+    .bph-report-link { font-size:0.88rem; font-weight:700; color:#F97316; text-decoration:none; }
+    .bph-report-link:hover { color:#EA6C0A; text-decoration:underline; }
 
-    .report-inner-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    }
-
-    /* ===== TEXT AREA ===== */
-    .inner-card-text {
-        max-width: 70%;
-    }
-
-    .report-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #6c757d;
-        margin-bottom: 8px;
-        text-transform: uppercase;
-        letter-spacing: 1.1px;
-    }
-
-    .inner-card-text h4 {
-        font-size: 2.2rem;
-        font-weight: 700;
-        margin-bottom: 6px;
-        color: #212529;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    .inner-card-text a.report-count {
-        font-size: 0.95rem;
-        color: #007bff;
-        font-weight: 600;
-        text-decoration: none;
-        transition: color 0.2s ease;
-    }
-
-    .inner-card-text a.report-count:hover {
-        color: #0056b3;
-        text-decoration: underline;
-    }
-
-    /* ===== ICON AREA ===== */
-    .inner-card-icon {
-        font-size: 2.8rem;
-        width: 72px;
-        height: 72px;
+    .bph-report-icon {
+        width: 68px; height: 68px;
         border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        display: flex; justify-content: center; align-items: center;
         flex-shrink: 0;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        transition: box-shadow 0.3s ease;
+        font-size: 1.8rem;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.1);
     }
-    .report-inner-card:hover .inner-card-icon {
-        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-    }
+    .bph-icon-penjualan { background: linear-gradient(135deg,#38b2ac,#319795); color:#e6fffa; }
+    .bph-icon-kasir { background: linear-gradient(135deg,#F97316,#FDBA74); color:#fff; }
+    .bph-icon-pembelian { background: linear-gradient(135deg,#EF4444,#DC2626); color:#fff; }
+    .bph-icon-return { background: linear-gradient(135deg,#1A1A2E,#2D2D4E); color:#F97316; }
 
-    /* ===== ICON COLORS & BACKGROUNDS - UNIQUE PER CARD ===== */
-    /* Total Penjualan Online */
-    .icon-penjualan {
-        background: linear-gradient(135deg, #38b2ac, #319795); /* teal gradient */
-        color: #e6fffa;
+    .bph-reload-btn {
+        display: inline-flex; align-items:center; gap:6px;
+        padding: 8px 16px; border-radius:10px; border:1.5px solid #F97316;
+        background: #fff; color:#F97316; font-weight:700; font-size:0.85rem;
+        cursor:pointer; transition:all 0.2s;
     }
+    .bph-reload-btn:hover { background:#F97316; color:#fff; }
 
-    /* Total Pendapatan Kasir */
-    .icon-kasir {
-        background: linear-gradient(135deg, #f6ad55, #dd6b20); /* orange gradient */
-        color: #fff7ed;
+    .bph-alert { padding:16px 20px; border-radius:12px; margin-top:24px; }
+    .bph-alert-danger { background:#FEF2F2; border:1.5px solid #FECACA; color:#991B1B; }
+    .bph-alert-success { background:#F0FDF4; border:1.5px solid #BBF7D0; color:#14532D; }
+    .bph-alert h6 { font-weight:800; margin-bottom:10px; }
+    .bph-alert ul { margin:0; padding-left:20px; }
+    .bph-alert ul li { margin-bottom:4px; font-size:0.9rem; }
+
+    #bphLoadingOverlay {
+        display:none; position:fixed; z-index:9999;
+        background:rgba(255,255,255,0.93); width:100%; height:100%;
+        top:0; left:0; justify-content:center; align-items:center; flex-direction:column;
     }
-
-    /* Total Pembelian */
-    .icon-pembelian {
-        background: linear-gradient(135deg, #f56565, #c53030); /* red gradient */
-        color: #fff5f5;
-    }
-
-    /* RETURN */
-    .icon-return {
-        background: linear-gradient(135deg, #4299e1, #2b6cb0); /* blue gradient */
-        color: #ebf8ff;
-    }
-
+    #bphLoadingText { font-size:1rem; font-weight:700; margin-top:16px; color:#F97316; }
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.7.4/lottie.min.js"></script>
 
-<div id="loadingOverlay">
-    <div id="lottieAnimation" style="width: 200px; height: 200px;"></div>
-    <div id="loadingText">Memuat ulang data...</div>
+<div id="bphLoadingOverlay">
+    <div id="bphLottie" style="width:160px; height:160px;"></div>
+    <div id="bphLoadingText">Memuat ulang data...</div>
 </div>
 
-<button class="btn btn-icons border-0 p-2" onclick="showLoadingAndReload();">
-    <i class="icon-refresh"></i>
-</button>
-
 <script>
-    var animation = lottie.loadAnimation({
-        container: document.getElementById('lottieAnimation'),
-        renderer: 'svg',
-        loop: true,
-        autoplay: true,
+    var bphAnim = lottie.loadAnimation({
+        container: document.getElementById('bphLottie'),
+        renderer: 'svg', loop: true, autoplay: true,
         path: 'https://assets10.lottiefiles.com/packages/lf20_jcikwtux.json'
     });
-
-    function showLoadingAndReload() {
-        const loading = document.getElementById('loadingOverlay');
-        loading.style.display = 'flex';
-        setTimeout(() => {
-            location.reload();
-        }, 1000);
+    function bphReload() {
+        document.getElementById('bphLoadingOverlay').style.display = 'flex';
+        setTimeout(() => location.reload(), 1000);
     }
 </script>
 
-
-
-
-<div class="row">
-    <div class="col-md-12 grid-margin">
-        <div class="card">
-            <div class="card-body">
-
-                <div class="row mb-3">
-                    <div class="col-md-12">
-                        <div class="d-sm-flex align-items-baseline report-summary-header">
-                            <h5 class="font-weight-semibold">Ringkasan Laporan Toko Online Apotek</h5>
-                            <span class="ms-auto">Updated Report</span>
-                            <button class="btn btn-icons border-0 p-2" onclick="showLoadingAndReload();">
-                                <i class="icon-refresh"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                @php
-                    $return = ($totalExpense + $totalkasir) - $totalbeli;
-                    $returnClass = $return < 0 ? 'text-danger' : 'text-success';
-                @endphp
-
-                <div class="report-inner-cards-wrapper">
-
-                    <div class="report-inner-card">
-                        <div class="inner-card-text">
-                            <span class="report-title">Total Penjualan Di Online</span>
-                            <h4>Rp {{ number_format($totalExpense, 0, ',', '.') }}</h4>
-                            <a href="{{ route('laporan-jual.index') }}" class="report-count">Detail Penjualan</a>
-                        </div>
-                        <div class="inner-card-icon icon-penjualan">
-                            <i class="icon-rocket"></i>
-                        </div>
-                    </div>
-
-                    <div class="report-inner-card">
-                        <div class="inner-card-text">
-                            <span class="report-title">Total Pendapatan Kasir</span>
-                            <h4>Rp {{ number_format($totalkasir, 0, ',', '.') }}</h4>
-                            <a href="{{ route('laporan_kasir.index') }}" class="report-count">Detail Penjualan Kasir</a>
-                        </div>
-                        <div class="inner-card-icon icon-kasir">
-                            <i class="icon-wallet"></i>
-                        </div>
-                    </div>
-
-                    <div class="report-inner-card">
-                        <div class="inner-card-text">
-                            <span class="report-title">Total Pembelian</span>
-                            <h4>Rp {{ number_format($totalbeli, 0, ',', '.') }}</h4>
-                            <a href="{{ route('laporan-beli.index') }}" class="report-count">Detail Pembelian</a>
-                        </div>
-                        <div class="inner-card-icon icon-pembelian">
-                            <i class="icon-briefcase"></i>
-                        </div>
-                    </div>
-
-                    <div class="report-inner-card">
-                        <div class="inner-card-text">
-                            <span class="report-title">RETURN</span>
-                            <h4 class="{{ $returnClass }}">
-                                Rp {{ number_format($return, 0, ',', '.') }}
-                            </h4>
-                        </div>
-                        <div class="inner-card-icon icon-return">
-                            <i class="icon-diamond"></i>
-                        </div>
-                    </div>
-
-                </div>
-
-                {{-- Saran Berdasarkan Return --}}
-                @if ($return < 0)
-                    <div class="alert alert-danger mt-4" role="alert">
-                        <h6><strong>Perhatian!</strong> Return Anda mengalami kerugian.</h6>
-                        <ul class="mb-0">
-                            <li>Evaluasi harga jual atau diskon yang diberikan.</li>
-                            <li>Optimalkan stok dan kontrol pembelian.</li>
-                            <li>Tingkatkan strategi pemasaran produk unggulan.</li>
-                        </ul>
-                    </div>
-                @else
-                    <div class="alert alert-success mt-4" role="alert">
-                        <h6><strong>Bagus!</strong> Return Anda positif.</h6>
-                        <ul class="mb-0">
-                            <li>Pertahankan strategi penjualan yang ada.</li>
-                            <li>Eksplorasi pengembangan cabang atau layanan baru.</li>
-                            <li>Investasikan kembali untuk memperluas produk unggulan.</li>
-                        </ul>
-                    </div>
-                @endif
-
-            </div>
+<!-- Page Header -->
+<div class="bph-page-head">
+    <div>
+        <h1 class="bph-page-title">Ringkasan Laporan</h1>
+        <div class="bph-breadcrumb">
+            <i class="bi bi-house-fill"></i>
+            <a href="#">Dashboard</a>
+            <span class="sep">/</span>
+            <span>Laporan</span>
         </div>
     </div>
+    <button class="bph-reload-btn" onclick="bphReload()">
+        <i class="bi bi-arrow-clockwise"></i> Refresh
+    </button>
 </div>
 
+<!-- Report Card -->
+<div class="bph-report-card-outer">
+    <div class="bph-report-card-head">
+        <div class="bph-report-card-title">
+            <i class="bi bi-bar-chart-line-fill"></i>
+            Ringkasan Laporan Toko Online Apotek
+        </div>
+        <span style="font-size:0.82rem; color:#94A3B8; font-weight:600;">Updated Report</span>
+    </div>
+    <div class="bph-report-card-body">
+
+        @php
+            $return = ($totalExpense + $totalkasir) - $totalbeli;
+            $returnClass = $return < 0 ? 'text-danger' : 'text-success';
+        @endphp
+
+        <div class="bph-report-grid">
+            <div class="bph-report-inner">
+                <div class="bph-report-text">
+                    <span class="bph-report-label">Total Penjualan Di Online</span>
+                    <div class="bph-report-value">Rp {{ number_format($totalExpense, 0, ',', '.') }}</div>
+                    <a href="{{ route('laporan-jual.index') }}" class="bph-report-link"><i class="bi bi-arrow-right-circle"></i> Detail Penjualan</a>
+                </div>
+                <div class="bph-report-icon bph-icon-penjualan"><i class="bi bi-rocket-takeoff-fill"></i></div>
+            </div>
+
+            <div class="bph-report-inner">
+                <div class="bph-report-text">
+                    <span class="bph-report-label">Total Pendapatan Kasir</span>
+                    <div class="bph-report-value">Rp {{ number_format($totalkasir, 0, ',', '.') }}</div>
+                    <a href="{{ route('laporan_kasir.index') }}" class="bph-report-link"><i class="bi bi-arrow-right-circle"></i> Detail Penjualan Kasir</a>
+                </div>
+                <div class="bph-report-icon bph-icon-kasir"><i class="bi bi-cash-coin"></i></div>
+            </div>
+
+            <div class="bph-report-inner">
+                <div class="bph-report-text">
+                    <span class="bph-report-label">Total Pembelian</span>
+                    <div class="bph-report-value">Rp {{ number_format($totalbeli, 0, ',', '.') }}</div>
+                    <a href="{{ route('laporan-beli.index') }}" class="bph-report-link"><i class="bi bi-arrow-right-circle"></i> Detail Pembelian</a>
+                </div>
+                <div class="bph-report-icon bph-icon-pembelian"><i class="bi bi-briefcase-fill"></i></div>
+            </div>
+
+            <div class="bph-report-inner">
+                <div class="bph-report-text">
+                    <span class="bph-report-label">Return</span>
+                    <div class="bph-report-value {{ $returnClass }}">Rp {{ number_format($return, 0, ',', '.') }}</div>
+                </div>
+                <div class="bph-report-icon bph-icon-return"><i class="bi bi-gem"></i></div>
+            </div>
+        </div>
+
+        @if ($return < 0)
+            <div class="bph-alert bph-alert-danger">
+                <h6><i class="bi bi-exclamation-triangle-fill me-2"></i>Perhatian! Return Anda mengalami kerugian.</h6>
+                <ul>
+                    <li>Evaluasi harga jual atau diskon yang diberikan.</li>
+                    <li>Optimalkan stok dan kontrol pembelian.</li>
+                    <li>Tingkatkan strategi pemasaran produk unggulan.</li>
+                </ul>
+            </div>
+        @else
+            <div class="bph-alert bph-alert-success">
+                <h6><i class="bi bi-check-circle-fill me-2"></i>Bagus! Return Anda positif.</h6>
+                <ul>
+                    <li>Pertahankan strategi penjualan yang ada.</li>
+                    <li>Eksplorasi pengembangan cabang atau layanan baru.</li>
+                    <li>Investasikan kembali untuk memperluas produk unggulan.</li>
+                </ul>
+            </div>
+        @endif
+
+    </div>
+</div>
 @endsection

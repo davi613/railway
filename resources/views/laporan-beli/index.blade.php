@@ -10,170 +10,103 @@
 
 @section('content')
 <style>
-    .laporan-title {
-        font-size: 26px;
-        font-weight: bold;
-        color: #34495e;
-        margin-bottom: 25px;
-    }
+    .bph-page-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
+    .bph-page-title { font-size:1.55rem; font-weight:800; color:#1A1A2E; margin:0 0 4px 0; }
+    .bph-breadcrumb { font-size:0.82rem; color:#8A8FA8; display:flex; align-items:center; gap:6px; }
+    .bph-breadcrumb a { color:#F97316; text-decoration:none; font-weight:600; }
+    .bph-breadcrumb .sep { color:#CBD5E1; }
+    .bph-btn { display:inline-flex; align-items:center; gap:7px; padding:9px 20px; border-radius:10px; font-size:0.88rem; font-weight:700; border:none; cursor:pointer; text-decoration:none; transition:all 0.2s; }
+    .bph-btn:hover { transform:translateY(-1px); }
+    .bph-btn-success { background:linear-gradient(135deg,#16A34A,#4ADE80); color:#fff; }
+    .bph-btn-success:hover { background:linear-gradient(135deg,#15803D,#16A34A); color:#fff; }
+    .bph-summary-grid { display:flex; flex-wrap:wrap; gap:20px; margin-bottom:28px; }
+    .bph-summary-card { flex:1; min-width:200px; background:#fff; border-radius:14px; padding:24px; box-shadow:0 4px 16px rgba(30,30,60,0.07); border:1.5px solid #F1F5F9; text-align:center; transition:transform 0.2s ease; }
+    .bph-summary-card:hover { transform:translateY(-4px); }
+    .bph-summary-card h5 { font-size:0.85rem; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; }
+    .bph-summary-card p { font-size:1.3rem; font-weight:800; color:#F97316; margin:0; }
+    .bph-card { background:#fff; border-radius:18px; box-shadow:0 4px 24px rgba(30,30,60,0.08); border:1.5px solid #F1F5F9; margin-bottom:28px; overflow:hidden; }
+    .bph-card-head { padding:16px 24px; background:linear-gradient(90deg,#1A1A2E,#2D2D4E); }
+    .bph-card-head h5 { margin:0; font-size:1rem; font-weight:700; color:#F97316; display:flex; align-items:center; gap:8px; }
+    .bph-card-body { padding:24px; }
+    .bph-table-scroll { overflow-x:auto; }
+    .bph-table { width:100%; border-collapse:separate; border-spacing:0; font-size:0.875rem; }
+    .bph-table thead tr { background:linear-gradient(90deg,#F97316,#FDBA74); }
+    .bph-table thead th { padding:12px 14px; font-size:0.78rem; font-weight:700; color:#fff; text-transform:uppercase; border:none; text-align:center; white-space:nowrap; }
+    .bph-table tbody tr { border-bottom:1px solid #F1F5F9; transition:background 0.15s; }
+    .bph-table tbody tr:hover { background:#FFF7ED; }
+    .bph-table tbody td { padding:12px 14px; color:#334155; vertical-align:middle; text-align:center; border:none; }
+    .bph-empty { text-align:center; padding:32px; color:#94A3B8; }
+    .bph-pagination-wrap { display:flex; justify-content:center; margin-top:20px; }
 
-    .summary-box {
-        display: flex;
-        gap: 20px;
-        flex-wrap: wrap;
-        margin-bottom: 30px;
-    }
-
-    .summary-card {
-        flex: 1;
-        background: linear-gradient(to right, #ecf0f1, #ffffff);
-        padding: 25px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-        text-align: center;
-        transition: all 0.3s ease;
-        position: relative;
-    }
-
-    .summary-card:hover {
-        transform: translateY(-5px);
-    }
-
-    .summary-card h4 {
-        font-size: 18px;
-        color: #2c3e50;
-        margin-bottom: 8px;
-    }
-
-    .summary-card p {
-        font-size: 16px;
-        color: #2d3436;
-    }
-
-    .card {
-        border-radius: 10px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-        transition: 0.3s ease;
-    }
-
-    .card-header {
-        background-color: #2e86de;
-        color: white;
-        font-weight: bold;
-        font-size: 16px;
-        padding: 12px 20px;
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
-    }
-
-    .table th, .table td {
-        text-align: center;
-        vertical-align: middle;
-        font-size: 14px;
-    }
-
-    .table thead {
-        background-color: #dff3ff;
-        color: #2c3e50;
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: #f2f9ff;
-        cursor: pointer;
-    }
-
-    .fade-in {
-        opacity: 0;
-        transform: translateY(20px);
-        animation: fadeInUp 0.5s forwards;
-    }
-
-    @keyframes fadeInUp {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+    .bph-fadein { opacity:0; transform:translateY(20px); animation:bphFadeUp 0.5s forwards; }
+    @keyframes bphFadeUp { to { opacity:1; transform:translateY(0); } }
 </style>
 
-<div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="col-12 fade-in">
-            <div class="bg-white rounded h-100 p-4 shadow-sm">
-
-                <!-- Heading -->
-                <div class="laporan-title">
-                    <i class="fas fa-chart-bar me-2 text-primary"></i> Laporan Pembelian
-                    <a href="{{ url('/laporan/pembelian/download') }}" class="btn btn-success" target="_blank">
-                        📄 Download Laporan Pembelian
-                    </a>
-                </div>
-
-                <!-- Summary -->
-                <div class="summary-box">
-                    <div class="summary-card">
-                        <h4><i class="fas fa-exchange-alt me-1 text-info"></i> Total Transaksi</h4>
-                        <p>{{ number_format($totalTransaksi) }} Transaksi</p>
-                    </div>
-                    <div class="summary-card">
-                        <h4><i class="fas fa-money-bill-wave me-1 text-success"></i> Total Nominal</h4>
-                        <p>Rp {{ number_format($totalNominal, 2, ',', '.') }}</p>
-                    </div>
-                </div>
-
-                <!-- Table Card -->
-                <div class="card">
-                    <div class="card-header">
-                        Rangkuman Detail Pembelian Obat
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th title="Nama Obat yang Dibeli">Nama Obat Yang Dibeli</th>
-                                        <th>Jumlah Beli</th>
-                                        <th>Subtotal</th>
-                                        <th>Tanggal</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($details as $index => $detail)
-                                        <tr>
-                                            <td>{{ $index + 1 }}</td>
-                                            <td>{{ $detail->obat->nama_obat ?? 'Nama Obat Tidak Ditemukan' }}</td>
-                                            <td>{{ number_format($detail->jumlah_beli) }}</td>
-                                            <td>Rp {{ number_format($detail->subtotal, 2, ',', '.') }}</td>
-                                            <td>{{ $detail->created_at->format('d/m/Y H:i') }}</td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="5">Tidak ada data pembelian ditemukan.</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pagination -->
-                <div class="mt-4 d-flex justify-content-center">
-                    {{ $details->links() }}
-                </div>
-
-            </div>
+<div class="bph-page-head">
+    <div>
+        <h1 class="bph-page-title">Laporan Pembelian</h1>
+        <div class="bph-breadcrumb">
+            <i class="bi bi-house-fill"></i>
+            <a href="#">Dashboard</a>
+            <span class="sep">/</span>
+            <span>Laporan Pembelian</span>
         </div>
+    </div>
+    <a href="{{ url('/laporan/pembelian/download') }}" class="bph-btn bph-btn-success" target="_blank">
+        <i class="bi bi-file-earmark-arrow-down"></i> Download Laporan
+    </a>
+</div>
+
+<div class="bph-summary-grid bph-fadein">
+    <div class="bph-summary-card">
+        <h5><i class="bi bi-arrow-left-right me-1"></i> Total Transaksi</h5>
+        <p>{{ number_format($totalTransaksi) }} Transaksi</p>
+    </div>
+    <div class="bph-summary-card">
+        <h5><i class="bi bi-cash-stack me-1"></i> Total Nominal</h5>
+        <p>Rp {{ number_format($totalNominal, 2, ',', '.') }}</p>
     </div>
 </div>
 
-<!-- JavaScript Fade-in Animations -->
+<div class="bph-card bph-fadein" style="animation-delay:0.1s;">
+    <div class="bph-card-head">
+        <h5><i class="bi bi-table"></i> Rangkuman Detail Pembelian Obat</h5>
+    </div>
+    <div class="bph-card-body">
+        <div class="bph-table-scroll">
+            <table class="bph-table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Obat Yang Dibeli</th>
+                        <th>Jumlah Beli</th>
+                        <th>Subtotal</th>
+                        <th>Tanggal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($details as $index => $detail)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td style="font-weight:700; text-align:left;">{{ $detail->obat->nama_obat ?? 'Nama Obat Tidak Ditemukan' }}</td>
+                            <td>{{ number_format($detail->jumlah_beli) }}</td>
+                            <td style="font-weight:700; color:#F97316;">Rp {{ number_format($detail->subtotal, 2, ',', '.') }}</td>
+                            <td style="font-size:0.8rem; color:#94A3B8;">{{ $detail->created_at->format('d/m/Y H:i') }}</td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="5"><div class="bph-empty"><i class="bi bi-inbox" style="font-size:2rem; display:block; margin-bottom:8px; color:#F97316;"></i>Tidak ada data pembelian ditemukan.</div></td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        <div class="bph-pagination-wrap">{{ $details->links() }}</div>
+    </div>
+</div>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const fadeInElements = document.querySelectorAll('.fade-in');
-        fadeInElements.forEach((el, index) => {
-            el.style.animationDelay = `${index * 0.2}s`;
+        document.querySelectorAll('.bph-fadein').forEach((el, i) => {
+            el.style.animationDelay = `${i * 0.15}s`;
         });
     });
 </script>

@@ -151,20 +151,7 @@
     object-fit: contain;" src="{{ asset('storage/' . $data->jenisObat->image_url) }}" class="img-fluid uniform-img" alt="">
                 <p>{{ $data->jenisObat->deskripsi_jenis }}</p>
 
-                <div class="rating d-flex">
-                    <p class="text-left mr-4">
-                        <a href="#" class="mr-2">5.0</a>
-                        @for($i = 0; $i < 5; $i++)
-                            <a href="#"><span class="ion-ios-star-outline"></span></a>
-                        @endfor
-                    </p>
-                    <p class="text-left mr-4">
-                        <a href="#" class="mr-2" style="color: #000;">100 <span style="color: #bbb;">Rating</span></a>
-                    </p>
-                    <p class="text-left">
-                        <a href="#" class="mr-2" style="color: #000;">500 <span style="color: #bbb;">Sold</span></a>
-                    </p>
-                </div>
+                
 
                 <p class="price">
                     <span id="harga-dinamis">Rp{{ number_format($data->harga_jual, 0, ',', '.') }}</span>

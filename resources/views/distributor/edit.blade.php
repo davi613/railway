@@ -9,65 +9,73 @@
 @endsection
 
 @section('content')
-<div class="container-fluid pt-4 px-4">
-    <div class="row justify-content-center">
-        <div class="col-md-10 col-lg-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="bi bi-pencil-square me-2"></i>Edit Distributor
-                    </h5>
-                    {{-- <a href="{{ route('distributor.index') }}" class="btn btn-outline-light btn-sm">
-                        <i class="bi bi-arrow-left-circle me-1"></i>Kembali
-                    </a> --}}
-                </div>
-                <div class="card-body">
-                    <form action="{{ route('distributor.update', $distributor->id) }}" method="POST">
-                        @csrf
-                        @method('PUT')
 
-                        <div class="mb-3">
-                            <label for="nama_distributor" class="form-label fw-semibold">Nama Distributor <span class="text-danger">*</span></label>
-                            <input type="text" name="nama_distributor" id="nama_distributor" class="form-control"
-                                value="{{ old('nama_distributor', $distributor->nama_distributor) }}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="telepon" class="form-label fw-semibold">Telepon <span class="text-danger">*</span></label>
-                            <input type="number" name="telepon" id="telepon" class="form-control"
-                                value="{{ old('telepon', $distributor->telepon) }}" required
-                                maxlength="15" pattern="\d{8,15}" title="Masukkan 8-15 digit angka saja">
-                            <div class="form-text">Format angka 8-15 digit. Contoh: 081234567890</div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="alamat" class="form-label fw-semibold">Alamat <span class="text-danger">*</span></label>
-                            <textarea name="alamat" id="alamat" class="form-control" rows="3" required>{{ old('alamat', $distributor->alamat) }}</textarea>
-                        </div>
-
-                        <div class="text-end">
-                            <a style="background-color:orange;" href="{{ route('distributor.index') }}" class="btn btn-secondary">
-                                <i class="bi bi-x-circle me-1"></i>Batal
-                            </a>
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-save me-1"></i>Simpan Perubahan
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+<div class="bph-page-head">
+    <div>
+        <h1 class="bph-page-title">Edit Distributor</h1>
+        <div class="bph-breadcrumb">
+            <a href="{{ route('admin.index') }}"><i class="bi bi-house-fill"></i> Dashboard</a>
+            <span class="sep">/</span>
+            <a href="{{ route('distributor.index') }}">Distributor</a>
+            <span class="sep">/</span>
+            <span>Edit</span>
         </div>
     </div>
+    <a href="{{ route('distributor.index') }}" class="bph-btn bph-btn-outline">
+        <i class="bi bi-arrow-left"></i> Kembali
+    </a>
 </div>
-@endsection
 
-@section('scripts')
+<div class="bph-card" style="max-width:680px;">
+    <div class="bph-card-head">
+        <div class="bph-card-title">
+            <i class="bi bi-pencil-square"></i>
+            Form Edit Distributor
+        </div>
+    </div>
+    <div class="bph-card-body">
+        <form action="{{ route('distributor.update', $distributor->id) }}" method="POST">
+            @csrf
+            @method('PUT')
+
+            <div class="bph-form-group">
+                <label class="bph-label" for="nama_distributor">Nama Distributor <span class="req">*</span></label>
+                <input type="text" name="nama_distributor" id="nama_distributor" class="bph-input"
+                    value="{{ old('nama_distributor', $distributor->nama_distributor) }}"
+                    placeholder="Masukkan nama distributor" required>
+            </div>
+
+            <div class="bph-form-group">
+                <label class="bph-label" for="telepon">Telepon <span class="req">*</span></label>
+                <input type="number" name="telepon" id="telepon" class="bph-input"
+                    value="{{ old('telepon', $distributor->telepon) }}"
+                    required maxlength="15" placeholder="081234567890">
+                <div class="bph-form-hint">Format angka 8–15 digit.</div>
+            </div>
+
+            <div class="bph-form-group">
+                <label class="bph-label" for="alamat">Alamat <span class="req">*</span></label>
+                <textarea name="alamat" id="alamat" class="bph-textarea" rows="3" required
+                    placeholder="Masukkan alamat lengkap">{{ old('alamat', $distributor->alamat) }}</textarea>
+            </div>
+
+            <div class="bph-form-divider"></div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <a href="{{ route('distributor.index') }}" class="bph-btn bph-btn-outline">
+                    <i class="bi bi-x-circle"></i> Batal
+                </a>
+                <button type="submit" class="bph-btn bph-btn-primary">
+                    <i class="bi bi-check-circle-fill"></i> Simpan Perubahan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
-    document.getElementById('telepon').addEventListener('input', function(e) {
-        this.value = this.value.replace(/[^0-9]/g, '');
-        if (this.value.length > 15) {
-            this.value = this.value.slice(0, 15);
-        }
-    });
+document.getElementById('telepon').addEventListener('input', function () {
+    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15);
+});
 </script>
 @endsection

@@ -1,91 +1,133 @@
-    <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-            <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-            <a class="navbar-brand brand-logo" >
-                <h3 style="color:white;" >Bio</h3>
-                <h3 style="color:orange; margin-top: -20px;" >Pharm</h3>
-                <img src="{{ asset ('back-end/images/logo-light.svg') }}" alt="logo-light" class="logo-light">
-            </a>
-            <a class="navbar-brand brand-logo-mini" ><img src="{{ asset ('back-end/images/logo-mini.svg') }}" alt="logo" /></a>
-            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
-                <span class="icon-menu"></span>
-            </button>
-            </div>
-            <div class="navbar-menu-wrapper d-flex align-items-center">
-            <h5 class="mb-0 font-weight-medium d-none d-lg-flex">Welcome Apotek Dashboard!</h5>
-            <ul class="navbar-nav navbar-nav-right">
-                {{-- <form class="search-form d-none d-md-block" action="#"> --}}
-                {{-- <i class="icon-magnifier"></i> --}}
-                {{-- <input type="search" class="form-control" placeholder="Search Here" title="Search here"> --}}
-                {{-- </form> --}}
-                
-            <li class="nav-item dropdown d-none d-xl-inline-flex user-dropdown">
-    <a class="nav-link dropdown-toggle d-flex align-items-center" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+<nav class="bph-navbar" id="bphNavbar">
+
+    <!-- Toggle Button -->
+    <button class="bph-navbar-toggle" id="bphToggle" title="Toggle Sidebar">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Mobile Brand -->
+    <a class="bph-mobile-brand" href="#">
+        <span class="t1">Bio<span class="t2">Pharm</span></span>
+    </a>
+
+    <!-- Welcome Text -->
+    <span class="bph-navbar-welcome">
+        Selamat Datang, <span>{{ Auth::user()->name }}</span> &mdash; Apotek BioPharm
+    </span>
+
+    <!-- User Dropdown -->
+    <div class="dropdown" style="margin-left:auto; flex-shrink:0;">
 
         @if ($title === 'Admin')
-            <img class="img-xs rounded-circle ms-2" src="{{ asset('back-end/pht/admin.jpg') }}" alt="Profile image">
-            <span class="font-weight-normal ms-2" style="color: #ff6600;">{{ Auth::user()->name }}</span>
-    </a>
-    <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
-        <div class="dropdown-header text-center">
-            <img class="img-md rounded-circle mb-3" style="width: 70px; height: 70px; object-fit: cover;" src="{{ asset('back-end/pht/admin.jpg') }}" alt="Profile image">
-            <p class="mb-1 mt-3" style="color: #ff6600;">{{ Auth::user()->name }}</p>
-            <p class="font-weight-light text-muted mb-0">{{ Auth::user()->email }}</p>
-        </div>
+            <a class="bph-user-pill" href="#" id="bphUserDrop" data-bs-toggle="dropdown" aria-expanded="false">
+                <img class="bph-user-pill-avatar" src="{{ asset('back-end/pht/admin.jpg') }}" alt="avatar">
+                <span class="bph-user-pill-name">{{ Auth::user()->name }}</span>
+                <i class="bi bi-chevron-down bph-user-pill-chevron"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end bph-dropdown-menu" aria-labelledby="bphUserDrop">
+                <div class="bph-dropdown-head">
+                    <img src="{{ asset('back-end/pht/admin.jpg') }}" alt="avatar">
+                    <div class="dn">{{ Auth::user()->name }}</div>
+                    <div class="de">{{ Auth::user()->email }}</div>
+                </div>
+                <div class="bph-dropdown-body">
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="bph-logout-btn">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
 
         @elseif ($title === 'Apoteker')
-            <img class="img-xs rounded-circle ms-2" src="{{ asset('back-end/pht/apoteker.jpg') }}" alt="Profile image">
-            <span class="font-weight-normal ms-2" style="color: #ff6600;">{{ Auth::user()->name }}</span>
-    </a>
-    <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
-        <div class="dropdown-header text-center">
-            <img class="img-md rounded-circle mb-3" style="width: 70px; height: 70px; object-fit: cover;" src="{{ asset('back-end/pht/apoteker.jpg') }}" alt="Profile image">
-            <p class="mb-1 mt-3" style="color: #ff6600;">{{ Auth::user()->name }}</p>
-            <p class="font-weight-light text-muted mb-0">{{ Auth::user()->email }}</p>
-        </div>
+            <a class="bph-user-pill" href="#" id="bphUserDrop" data-bs-toggle="dropdown" aria-expanded="false">
+                <img class="bph-user-pill-avatar" src="{{ asset('back-end/pht/apoteker.jpg') }}" alt="avatar">
+                <span class="bph-user-pill-name">{{ Auth::user()->name }}</span>
+                <i class="bi bi-chevron-down bph-user-pill-chevron"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end bph-dropdown-menu" aria-labelledby="bphUserDrop">
+                <div class="bph-dropdown-head">
+                    <img src="{{ asset('back-end/pht/apoteker.jpg') }}" alt="avatar">
+                    <div class="dn">{{ Auth::user()->name }}</div>
+                    <div class="de">{{ Auth::user()->email }}</div>
+                </div>
+                <div class="bph-dropdown-body">
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="bph-logout-btn">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
 
         @elseif ($title === 'Karyawan')
-            <img class="img-xs rounded-circle ms-2" src="{{ asset('back-end/pht/karyawan.jpg') }}" alt="Profile image">
-            <span class="font-weight-normal ms-2" style="color: #ff6600;">{{ Auth::user()->name }}</span>
-    </a>
-    <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
-        <div class="dropdown-header text-center">
-            <img class="img-md rounded-circle mb-3" style="width: 70px; height: 70px; object-fit: cover;" src="{{ asset('back-end/pht/karyawan.jpg') }}" alt="Profile image">
-            <p class="mb-1 mt-3" style="color: #ff6600;">{{ Auth::user()->name }}</p>
-            <p class="font-weight-light text-muted mb-0">{{ Auth::user()->email }}</p>
-        </div>
+            <a class="bph-user-pill" href="#" id="bphUserDrop" data-bs-toggle="dropdown" aria-expanded="false">
+                <img class="bph-user-pill-avatar" src="{{ asset('back-end/pht/karyawan.jpg') }}" alt="avatar">
+                <span class="bph-user-pill-name">{{ Auth::user()->name }}</span>
+                <i class="bi bi-chevron-down bph-user-pill-chevron"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end bph-dropdown-menu" aria-labelledby="bphUserDrop">
+                <div class="bph-dropdown-head">
+                    <img src="{{ asset('back-end/pht/karyawan.jpg') }}" alt="avatar">
+                    <div class="dn">{{ Auth::user()->name }}</div>
+                    <div class="de">{{ Auth::user()->email }}</div>
+                </div>
+                <div class="bph-dropdown-body">
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="bph-logout-btn">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
 
         @elseif ($title === 'Kasir')
-            <img class="img-xs rounded-circle ms-2" src="{{ asset('back-end/pht/kasir.jpg') }}" alt="Profile image">
-            <span class="font-weight-normal ms-2" style="color: #ff6600;">{{ Auth::user()->name }}</span>
-    </a>
-    <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
-        <div class="dropdown-header text-center">
-            <img class="img-md rounded-circle mb-3" style="width: 70px; height: 70px; object-fit: cover;" src="{{ asset('back-end/pht/kasir.jpg') }}" alt="Profile image">
-            <p class="mb-1 mt-3" style="color: #ff6600;">{{ Auth::user()->name }}</p>
-            <p class="font-weight-light text-muted mb-0">{{ Auth::user()->email }}</p>
-        </div>
+            <a class="bph-user-pill" href="#" id="bphUserDrop" data-bs-toggle="dropdown" aria-expanded="false">
+                <img class="bph-user-pill-avatar" src="{{ asset('back-end/pht/kasir.jpg') }}" alt="avatar">
+                <span class="bph-user-pill-name">{{ Auth::user()->name }}</span>
+                <i class="bi bi-chevron-down bph-user-pill-chevron"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end bph-dropdown-menu" aria-labelledby="bphUserDrop">
+                <div class="bph-dropdown-head">
+                    <img src="{{ asset('back-end/pht/kasir.jpg') }}" alt="avatar">
+                    <div class="dn">{{ Auth::user()->name }}</div>
+                    <div class="de">{{ Auth::user()->email }}</div>
+                </div>
+                <div class="bph-dropdown-body">
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="bph-logout-btn">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
 
         @else {{-- Pemilik --}}
-            <img class="img-xs rounded-circle ms-2" src="{{ asset('back-end/pht/owner.jpg') }}" alt="Profile image">
-            <span class="font-weight-normal ms-2" style="color: #ff6600;">{{ Auth::user()->name }}</span>
-    </a>
-    <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
-        <div class="dropdown-header text-center">
-            <img class="img-md rounded-circle mb-3" style="width: 70px; height: 70px; object-fit: cover;" src="{{ asset('back-end/pht/owner.jpg') }}" alt="Profile image">
-            <p class="mb-1 mt-3" style="color: #ff6600;">{{ Auth::user()->name }}</p>
-            <p class="font-weight-light text-muted mb-0">{{ Auth::user()->email }}</p>
-        </div>
+            <a class="bph-user-pill" href="#" id="bphUserDrop" data-bs-toggle="dropdown" aria-expanded="false">
+                <img class="bph-user-pill-avatar" src="{{ asset('back-end/pht/owner.jpg') }}" alt="avatar">
+                <span class="bph-user-pill-name">{{ Auth::user()->name }}</span>
+                <i class="bi bi-chevron-down bph-user-pill-chevron"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end bph-dropdown-menu" aria-labelledby="bphUserDrop">
+                <div class="bph-dropdown-head">
+                    <img src="{{ asset('back-end/pht/owner.jpg') }}" alt="avatar">
+                    <div class="dn">{{ Auth::user()->name }}</div>
+                    <div class="de">{{ Auth::user()->email }}</div>
+                </div>
+                <div class="bph-dropdown-body">
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="bph-logout-btn">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
         @endif
 
-        <form action="{{ route('logout') }}" method="POST" class="px-3 pb-3">
-            @csrf
-            <button type="submit" class="btn btn-warning w-100" style="color: white; font-weight: 600;background-color:orange;">Logout</button>
-        </form>
     </div>
-</li>
-            </ul>
-            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
-                <span class="icon-menu"></span>
-            </button>
-            </div>
-        </nav>
+</nav>

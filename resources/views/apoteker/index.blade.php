@@ -8,110 +8,174 @@
     @include('be.sidebar')
 @endsection
 
-
 @section('content')
 <style>
-    .welcome-box {
-        background: linear-gradient(135deg, #74ebd5, #ACB6E5);
-        padding: 30px;
-        border-radius: 15px;
-        color: #2c3e50;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        text-align: center;
-        margin-bottom: 40px;
+    /* ===== APOTEKER INDEX ===== */
+    .bph-page-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+        gap: 12px;
     }
-
-    .welcome-box h2 {
-        font-size: 32px;
-        font-weight: 700;
+    .bph-page-title {
+        font-size: 1.55rem;
+        font-weight: 800;
+        color: #1A1A2E;
+        margin: 0 0 4px 0;
+        letter-spacing: -0.5px;
     }
-
-    .welcome-box p {
-        font-size: 18px;
-        margin-top: 10px;
+    .bph-breadcrumb {
+        font-size: 0.82rem;
+        color: #8A8FA8;
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
-
-    .card-feature {
-        background-color: #ffffff;
-        padding: 25px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-        text-align: center;
-        transition: all 0.3s ease;
-    }
-
-    .card-feature:hover {
-        transform: translateY(-5px);
-    }
-
-    .card-feature i {
-        font-size: 36px;
-        color: #3498db;
-        margin-bottom: 15px;
-    }
-
-    .card-feature h5 {
+    .bph-breadcrumb a {
+        color: #F97316;
+        text-decoration: none;
         font-weight: 600;
-        color: #2c3e50;
+    }
+    .bph-breadcrumb .sep { color: #CBD5E1; }
+
+    .bph-welcome-hero {
+        background: linear-gradient(135deg, #F97316 0%, #FDBA74 60%, #FFF7ED 100%);
+        border-radius: 20px;
+        padding: 48px 40px;
+        text-align: center;
+        margin-bottom: 32px;
+        box-shadow: 0 8px 32px rgba(249,115,22,0.18);
+        position: relative;
+        overflow: hidden;
+    }
+    .bph-welcome-hero::before {
+        content: '';
+        position: absolute;
+        top: -40px; right: -40px;
+        width: 200px; height: 200px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.13);
+    }
+    .bph-welcome-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -30px; left: -30px;
+        width: 150px; height: 150px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.10);
+    }
+    .bph-welcome-hero h2 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #fff;
         margin-bottom: 10px;
+        position: relative;
+        z-index: 1;
+    }
+    .bph-welcome-hero p {
+        font-size: 1.1rem;
+        color: rgba(255,255,255,0.92);
+        margin: 0;
+        position: relative;
+        z-index: 1;
     }
 
-    .card-feature p {
-        color: #7f8c8d;
-        font-size: 14px;
+    .bph-feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+    @media (max-width: 900px) {
+        .bph-feature-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 580px) {
+        .bph-feature-grid { grid-template-columns: 1fr; }
+        .bph-welcome-hero { padding: 32px 20px; }
+        .bph-welcome-hero h2 { font-size: 1.4rem; }
     }
 
-    .fade-in {
+    .bph-feat-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 32px 24px;
+        text-align: center;
+        box-shadow: 0 4px 18px rgba(249,115,22,0.08);
+        border: 1.5px solid #FEE2CA;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
         opacity: 0;
-        transform: translateY(20px);
-        animation: fadeInUp 0.5s forwards;
+        transform: translateY(24px);
+        animation: bphFadeUp 0.5s forwards;
+    }
+    .bph-feat-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 32px rgba(249,115,22,0.16);
+    }
+    .bph-feat-icon {
+        width: 68px; height: 68px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #FFF7ED, #FDBA74);
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 18px auto;
+        font-size: 2rem;
+        color: #F97316;
+        box-shadow: 0 4px 14px rgba(249,115,22,0.15);
+    }
+    .bph-feat-card h5 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #1A1A2E;
+        margin-bottom: 8px;
+    }
+    .bph-feat-card p {
+        font-size: 0.88rem;
+        color: #64748B;
+        margin: 0;
+        line-height: 1.6;
     }
 
-    @keyframes fadeInUp {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    @keyframes bphFadeUp {
+        to { opacity: 1; transform: translateY(0); }
     }
 </style>
 
-<div class="container-fluid pt-4 px-4">
-    <div class="welcome-box fade-in">
-        <h2>Selamat Datang, Apoteker</h2>
-        <p>"Meracik ketelitian, menyembuhkan dengan dedikasi."</p>
-    </div>
-
-    <div class="row g-4">
-        <div class="col-md-4 fade-in">
-            <div class="card-feature">
-                <i class="fas fa-pills"></i>
-                <h5>Manajemen Obat</h5>
-                <p>Kelola data obat dengan mudah dan aman.</p>
-            </div>
-        </div>
-        <div class="col-md-4 fade-in">
-            <div class="card-feature">
-                <i class="fas fa-notes-medical"></i>
-                <h5>Keakuratan Resep</h5>
-                <p>Pastikan setiap obat sesuai dengan resep dokter.</p>
-            </div>
-        </div>
-        <div class="col-md-4 fade-in">
-            <div class="card-feature">
-                <i class="fas fa-user-shield"></i>
-                <h5>Profesionalisme</h5>
-                <p>Jaga kepercayaan dengan pelayanan yang optimal.</p>
-            </div>
+<!-- Page Header -->
+<div class="bph-page-head">
+    <div>
+        <h1 class="bph-page-title">Dashboard Apoteker</h1>
+        <div class="bph-breadcrumb">
+            <i class="bi bi-house-fill"></i>
+            <span>Dashboard</span>
+            <span class="sep">/</span>
+            <span>Apoteker</span>
         </div>
     </div>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const fadeInElements = document.querySelectorAll('.fade-in');
-        fadeInElements.forEach((el, index) => {
-            el.style.animationDelay = `${index * 0.2}s`;
-        });
-    });
-</script>
+<!-- Welcome Hero -->
+<div class="bph-welcome-hero">
+    <h2><i class="bi bi-capsule-pill me-2"></i>Selamat Datang, Apoteker</h2>
+    <p>"Meracik ketelitian, menyembuhkan dengan dedikasi."</p>
+</div>
+
+<!-- Feature Cards -->
+<div class="bph-feature-grid">
+    <div class="bph-feat-card" style="animation-delay:0.1s;">
+        <div class="bph-feat-icon"><i class="bi bi-capsule"></i></div>
+        <h5>Manajemen Obat</h5>
+        <p>Kelola data obat dengan mudah dan aman.</p>
+    </div>
+    <div class="bph-feat-card" style="animation-delay:0.25s;">
+        <div class="bph-feat-icon"><i class="bi bi-file-earmark-medical"></i></div>
+        <h5>Keakuratan Resep</h5>
+        <p>Pastikan setiap obat sesuai dengan resep dokter.</p>
+    </div>
+    <div class="bph-feat-card" style="animation-delay:0.4s;">
+        <div class="bph-feat-icon"><i class="bi bi-shield-check"></i></div>
+        <h5>Profesionalisme</h5>
+        <p>Jaga kepercayaan dengan pelayanan yang optimal.</p>
+    </div>
+</div>
 @endsection
