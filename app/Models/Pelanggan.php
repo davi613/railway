@@ -18,8 +18,13 @@ class Pelanggan extends Model implements Authenticatable
         'alamat1', 'kota1', 'provinsi1', 'kodepos1',
         'alamat2', 'kota2', 'provinsi2', 'kodepos2',
         'alamat3', 'kota3', 'provinsi3', 'kodepos3',
-        'foto', 'url_ktp'
+        'foto', 'url_ktp',
+        'email_verification_token', 'email_verified_at'
     ];
 
     protected $hidden = ['password'];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
 }

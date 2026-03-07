@@ -138,13 +138,34 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout'); // L
 //LOGIN FRONT END
 
 // Auth Pelanggan
+
+// Auth Pelanggan
 Route::prefix('pelanggan')->group(function () {
     Route::get('/login', [PelangganAuthController::class, 'showLoginForm'])->name('pelanggan.login');
     Route::post('/login', [PelangganAuthController::class, 'login'])->name('pelanggan.login.submit');
     Route::get('/register', [PelangganAuthController::class, 'showRegisterForm'])->name('pelanggan.register');
     Route::post('/register', [PelangganAuthController::class, 'register'])->name('pelanggan.register.submit');
     Route::post('/logout', [PelangganAuthController::class, 'logout'])->name('pelanggan.logout');
+
+    // Verifikasi Email
+    Route::get('/verify-email/{token}', [PelangganAuthController::class, 'verifyEmail'])->name('pelanggan.verify.email');
+
+    // Forgot Password
+    Route::get('/forgot-password', [PelangganAuthController::class, 'showForgotForm'])->name('pelanggan.forgot');
+    Route::post('/forgot-password', [PelangganAuthController::class, 'sendResetLink'])->name('pelanggan.forgot.submit');
+
+    // Reset Password (Ganti Password)
+    Route::get('/reset-password/{token}', [PelangganAuthController::class, 'showGantiPwForm'])->name('pelanggan.reset.form');
+    Route::post('/reset-password', [PelangganAuthController::class, 'gantiPassword'])->name('pelanggan.reset.submit');
 });
+
+// Route::prefix('pelanggan')->group(function () {
+//     Route::get('/login', [PelangganAuthController::class, 'showLoginForm'])->name('pelanggan.login');
+//     Route::post('/login', [PelangganAuthController::class, 'login'])->name('pelanggan.login.submit');
+//     Route::get('/register', [PelangganAuthController::class, 'showRegisterForm'])->name('pelanggan.register');
+//     Route::post('/register', [PelangganAuthController::class, 'register'])->name('pelanggan.register.submit');
+//     Route::post('/logout', [PelangganAuthController::class, 'logout'])->name('pelanggan.logout');
+// });
 
 // Route yang membutuhkan auth pelanggan
 Route::middleware(['pelanggan.auth'])->group(function () {
