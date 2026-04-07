@@ -12,6 +12,54 @@
     .bph-breadcrumb a { color:#F97316; text-decoration:none; font-weight:600; }
     .bph-breadcrumb .sep { color:#CBD5E1; }
 
+    /* Filter Status Buttons */
+    .bph-filter-section { margin-bottom: 28px; }
+    .bph-filter-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #64748B; margin-bottom: 12px; display: block; }
+    .bph-filter-group { display: flex; flex-wrap: wrap; gap: 12px; }
+    .bph-filter-btn { 
+        display: inline-flex; 
+        align-items: center; 
+        gap: 10px; 
+        padding: 10px 20px; 
+        border-radius: 50px; 
+        font-size: 0.85rem; 
+        font-weight: 600; 
+        border: none; 
+        cursor: pointer; 
+        transition: all 0.3s ease; 
+        text-decoration: none; 
+        background: #F1F5F9; 
+        color: #334155; 
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .bph-filter-btn:hover { 
+        transform: translateY(-2px); 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+    }
+    .bph-filter-btn.active { 
+        background: linear-gradient(135deg, #F97316 0%, #EA6C0A 100%); 
+        color: white; 
+        box-shadow: 0 4px 14px rgba(249,115,22,0.3);
+    }
+    .bph-filter-count { 
+        background: rgba(0,0,0,0.08); 
+        padding: 2px 8px; 
+        border-radius: 30px; 
+        font-size: 0.7rem; 
+        font-weight: 700; 
+    }
+    .bph-filter-btn.active .bph-filter-count { 
+        background: rgba(255,255,255,0.25); 
+        color: white; 
+    }
+    .bph-filter-reset { 
+        background: #E2E8F0; 
+        color: #475569; 
+    }
+    .bph-filter-reset:hover { 
+        background: #CBD5E1; 
+    }
+
     .bph-btn { display:inline-flex; align-items:center; gap:6px; padding:7px 15px; border-radius:9px; font-size:0.81rem; font-weight:700; border:none; cursor:pointer; text-decoration:none; transition:all 0.2s; }
     .bph-btn:hover { transform:translateY(-1px); }
     .bph-btn-warning { background:#F97316; color:#fff; }
@@ -33,6 +81,9 @@
 
     .bph-badge-menunggu { background:#FEF3C7; color:#D97706; padding:4px 12px; border-radius:20px; font-size:0.73rem; font-weight:700; white-space:nowrap; }
     .bph-badge-dibatalkan { background:#FEE2E2; color:#DC2626; padding:4px 12px; border-radius:20px; font-size:0.73rem; font-weight:700; white-space:nowrap; }
+    .bph-badge-dikonfirmasi { background:#D1FAE5; color:#059669; padding:4px 12px; border-radius:20px; font-size:0.73rem; font-weight:700; white-space:nowrap; }
+    .bph-badge-dikirim { background:#DBEAFE; color:#2563EB; padding:4px 12px; border-radius:20px; font-size:0.73rem; font-weight:700; white-space:nowrap; }
+    .bph-badge-selesai { background:#E0E7FF; color:#4F46E5; padding:4px 12px; border-radius:20px; font-size:0.73rem; font-weight:700; white-space:nowrap; }
     .bph-badge-default { background:#F1F5F9; color:#64748B; padding:4px 12px; border-radius:20px; font-size:0.73rem; font-weight:700; white-space:nowrap; }
 
     .bph-resep-thumb { width:56px; height:56px; object-fit:cover; border-radius:8px; border:2px solid #F97316; cursor:pointer; transition:transform 0.2s; }
@@ -44,12 +95,14 @@
     .bph-modal-close { position:absolute; top:12px; right:18px; font-size:1.8rem; font-weight:700; color:#64748B; cursor:pointer; line-height:1; }
 
     .bph-alert-info { background:#EFF6FF; border:1.5px solid #BFDBFE; color:#1D4ED8; padding:16px 20px; border-radius:12px; text-align:center; font-weight:600; margin-bottom:20px; }
+    
+    .bph-empty-filter { background:#FEF2F2; border:1.5px solid #FEE2E2; color:#DC2626; padding:16px 20px; border-radius:12px; text-align:center; font-weight:600; margin-bottom:20px; }
 </style>
 
 <div class="bph-page-head">
     <div>
         <h1 class="bph-page-title">Konfirmasi Paket</h1>
-        <p class="bph-page-subtitle">Hanya paket dengan status "MENUNGGU KONFIRMASI" yang bisa di edit</p>
+        <p class="bph-page-subtitle">Kelola dan konfirmasi semua pesanan pelanggan</p>
         <div class="bph-breadcrumb" style="margin-top:4px;">
             <i class="bi bi-house-fill"></i>
             <a href="#">Dashboard</a>
@@ -60,14 +113,75 @@
 </div>
 
 @php
-    $konfirmasis = $konfirmasis->sortByDesc(function($item) {
+    // Hitung total paket per status
+    $totalSemua = $konfirmasis->count();
+    $totalMenunggu = $konfirmasis->where('status_order', 'Menunggu Konfirmasi')->count();
+    $totalDibatalkan = $konfirmasis->where('status_order', 'Dibatalkan Pembeli')->count();
+    $totalDikonfirmasi = $konfirmasis->where('status_order', 'Dikonfirmasi')->count();
+    $totalDikirim = $konfirmasis->where('status_order', 'Dikirim')->count();
+    $totalSelesai = $konfirmasis->where('status_order', 'Selesai')->count();
+    
+    // Filter status dari request
+    $filterStatus = request()->get('status', 'semua');
+    
+    // Filter data berdasarkan status
+    if ($filterStatus === 'semua') {
+        $filteredKonfirmasis = $konfirmasis;
+    } else {
+        $filteredKonfirmasis = $konfirmasis->where('status_order', $filterStatus);
+    }
+    
+    // Urutkan data
+    $filteredKonfirmasis = $filteredKonfirmasis->sortByDesc(function($item) {
         $priority = $item->status_order === 'Menunggu Konfirmasi' ? 2 : ($item->status_order === 'Dibatalkan Pembeli' ? 1 : 0);
         return $priority * 10000000000 + strtotime($item->updated_at);
     });
 @endphp
 
-@if($konfirmasis->isEmpty())
-    <div class="bph-alert-info"><i class="bi bi-info-circle me-2"></i>Tidak ada pesanan yang perlu dikonfirmasi.</div>
+<!-- Filter Status Section -->
+<div class="bph-filter-section">
+    <div class="bph-filter-label">
+        <i class="bi bi-funnel-fill me-1"></i> Filter Berdasarkan Status
+    </div>
+    <div class="bph-filter-group">
+        <a href="{{ route('konfirmasi.index', ['status' => 'semua']) }}" 
+           class="bph-filter-btn {{ $filterStatus == 'semua' ? 'active' : '' }}">
+            <i class="bi bi-grid-3x3-gap-fill"></i> Semua
+            <span class="bph-filter-count">{{ $totalSemua }}</span>
+        </a>
+        <a href="{{ route('konfirmasi.index', ['status' => 'Menunggu Konfirmasi']) }}" 
+           class="bph-filter-btn {{ $filterStatus == 'Menunggu Konfirmasi' ? 'active' : '' }}">
+            <i class="bi bi-clock-history"></i> Menunggu Konfirmasi
+            <span class="bph-filter-count">{{ $totalMenunggu }}</span>
+        </a>
+        <a href="{{ route('konfirmasi.index', ['status' => 'Dikonfirmasi']) }}" 
+           class="bph-filter-btn {{ $filterStatus == 'Dikonfirmasi' ? 'active' : '' }}">
+            <i class="bi bi-check2-circle"></i> Dikonfirmasi
+            <span class="bph-filter-count">{{ $totalDikonfirmasi }}</span>
+        </a>
+        <a href="{{ route('konfirmasi.index', ['status' => 'Dikirim']) }}" 
+           class="bph-filter-btn {{ $filterStatus == 'Dikirim' ? 'active' : '' }}">
+            <i class="bi bi-truck"></i> Dikirim
+            <span class="bph-filter-count">{{ $totalDikirim }}</span>
+        </a>
+        <a href="{{ route('konfirmasi.index', ['status' => 'Selesai']) }}" 
+           class="bph-filter-btn {{ $filterStatus == 'Selesai' ? 'active' : '' }}">
+            <i class="bi bi-check2-all"></i> Selesai
+            <span class="bph-filter-count">{{ $totalSelesai }}</span>
+        </a>
+        <a href="{{ route('konfirmasi.index', ['status' => 'Dibatalkan Pembeli']) }}" 
+           class="bph-filter-btn {{ $filterStatus == 'Dibatalkan Pembeli' ? 'active' : '' }}">
+            <i class="bi bi-x-circle"></i> Dibatalkan
+            <span class="bph-filter-count">{{ $totalDibatalkan }}</span>
+        </a>
+    </div>
+</div>
+
+@if($filteredKonfirmasis->isEmpty())
+    <div class="bph-empty-filter">
+        <i class="bi bi-inbox-fill me-2"></i>
+        Tidak ada pesanan dengan status "{{ $filterStatus }}" yang ditemukan.
+    </div>
 @else
 <div class="bph-card">
     <div class="bph-table-scroll">
@@ -85,15 +199,13 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($konfirmasis as $konfirmasi)
+                @foreach($filteredKonfirmasis as $konfirmasi)
                 <tr>
                     <td>
                         <div style="display:flex; gap:4px; justify-content:center; flex-wrap:wrap;">
-                            @if($konfirmasi->status_order == 'Menunggu Konfirmasi')
-                                <a href="{{ route('konfirmasi.edit', $konfirmasi->id) }}" class="bph-btn bph-btn-warning bph-btn-sm">
-                                    <i class="bi bi-pencil-square"></i> Edit
-                                </a>
-                            @endif
+                            <a href="{{ route('konfirmasi.edit', $konfirmasi->id) }}" class="bph-btn bph-btn-warning bph-btn-sm">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
                             <a href="{{ route('konfirmasi.show', $konfirmasi->id) }}" class="bph-btn bph-btn-info bph-btn-sm">
                                 <i class="bi bi-eye-fill"></i> Detail
                             </a>
@@ -116,6 +228,9 @@
                         <span class="
                             @if($konfirmasi->status_order == 'Menunggu Konfirmasi') bph-badge-menunggu
                             @elseif($konfirmasi->status_order == 'Dibatalkan Pembeli') bph-badge-dibatalkan
+                            @elseif($konfirmasi->status_order == 'Dikonfirmasi') bph-badge-dikonfirmasi
+                            @elseif($konfirmasi->status_order == 'Dikirim') bph-badge-dikirim
+                            @elseif($konfirmasi->status_order == 'Selesai') bph-badge-selesai
                             @else bph-badge-default @endif">
                             {{ $konfirmasi->status_order }}
                         </span>
@@ -141,9 +256,16 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    function bphShowModal(url) { document.getElementById('bphResepImage').src = url; document.getElementById('bphModalResep').style.display = 'block'; }
-    function bphCloseModal() { document.getElementById('bphModalResep').style.display = 'none'; }
-    window.addEventListener('click', function(e) { if (e.target === document.getElementById('bphModalResep')) bphCloseModal(); });
+    function bphShowModal(url) { 
+        document.getElementById('bphResepImage').src = url; 
+        document.getElementById('bphModalResep').style.display = 'block'; 
+    }
+    function bphCloseModal() { 
+        document.getElementById('bphModalResep').style.display = 'none'; 
+    }
+    window.addEventListener('click', function(e) { 
+        if (e.target === document.getElementById('bphModalResep')) bphCloseModal(); 
+    });
 
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.bph-btn-delete').forEach(button => {
@@ -158,7 +280,9 @@
                     cancelButtonColor: '#F97316',
                     confirmButtonText: 'Ya, hapus!',
                     cancelButtonText: 'Batal'
-                }).then((result) => { if (result.isConfirmed) form.submit(); });
+                }).then((result) => { 
+                    if (result.isConfirmed) form.submit(); 
+                });
             });
         });
     });

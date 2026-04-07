@@ -51,6 +51,18 @@ Route::group(['middleware' => ['auth:pelanggan']], function() {
 });
 //Keranjang//
 
+Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+Route::get('/checkout/finish', [CheckoutController::class, 'finish'])->name('checkout.finish');
+Route::post('/checkout/notification', [CheckoutController::class, 'notification'])->name('checkout.notification');
+ 
+// ============================================================
+// ROUTE BARU — tambahkan ini:
+// Dipanggil via AJAX dari JS Snap callback onSuccess/onPending
+// ============================================================
+Route::post('/checkout/create-order', [CheckoutController::class, 'createOrder'])->name('checkout.createOrder');
+
+
 //pesanan
 Route::middleware(['auth:pelanggan'])->group(function () {
     // Order routes
@@ -81,7 +93,7 @@ Route::resource('/product-detail', \App\Http\Controllers\ProductdetailController
 Route::delete('/users/bulk-delete', [UserController::class, 'bulkDelete'])->name('users.bulkDelete');
 Route::resource('/detail_jual', \App\Http\Controllers\DetailJualController::class);
 
-Route::middleware(['role:admin'])->group(function () {
+Route::middleware(['auth','role:admin'])->group(function () {
     Route::get('/admin', [AuthController::class, 'adminIndex'])->name('admin.index');
     Route::resource('/users', \App\Http\Controllers\UserController::class);
     Route::resource('/costumer', \App\Http\Controllers\CostumerController::class);
@@ -91,7 +103,7 @@ Route::middleware(['role:admin'])->group(function () {
 
 });
 
-Route::middleware(['role:apoteker'])->group(function () {
+Route::middleware(['auth','role:apoteker'])->group(function () {
     Route::get('/apoteker', [AuthController::class, 'apotekerIndex'])->name('apoteker.index');
     Route::resource('/obat', \App\Http\Controllers\ObatController::class);
     Route::resource('/jenis_obat', \App\Http\Controllers\JenisObatController::class);
@@ -99,7 +111,7 @@ Route::middleware(['role:apoteker'])->group(function () {
     Route::resource('/detail_pembelian', \App\Http\Controllers\DetailPembelianController::class);
 });
 
-Route::middleware(['role:karyawan'])->group(function () {
+Route::middleware(['auth','role:karyawan'])->group(function () {
     Route::get('/karyawan', [AuthController::class, 'karyawanIndex'])->name('karyawan.index');
     Route::resource('/penjualan', \App\Http\Controllers\PenjualanController::class);
     Route::resource('/pengiriman',\App\Http\Controllers\PengirimanController::class);
@@ -107,7 +119,7 @@ Route::middleware(['role:karyawan'])->group(function () {
 
 });
 
-Route::middleware(['role:pemilik'])->group(function () {
+Route::middleware(['auth','role:pemilik'])->group(function () {
     Route::get('/pemilik', [AuthController::class, 'pemilikIndex'])->name('pemilik.index');
     Route::resource('/laporan-jual', \App\Http\Controllers\LaporanJualController::class);
     Route::resource('/laporan-beli', \App\Http\Controllers\LaporanBeliController::class);
@@ -116,7 +128,7 @@ Route::middleware(['role:pemilik'])->group(function () {
 
 });
 
-Route::middleware(['role:kasir'])->group(function () {
+Route::middleware(['auth','role:kasir'])->group(function () {
     Route::get('/kasir', [AuthController::class, 'kasirIndex'])->name('kasir.index');
     Route::resource('/jual', \App\Http\Controllers\JualController::class);
     Route::post('/jual/bulk-delete', [JualController::class, 'bulkDelete'])->name('jual.bulkDelete');

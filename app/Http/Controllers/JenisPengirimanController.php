@@ -9,46 +9,43 @@ use Illuminate\Support\Facades\Storage;
 class JenisPengirimanController extends Controller
 {
     public function index(Request $request)
-{
-    $query = JenisPengiriman::query();
+    {
+        $query = JenisPengiriman::query();
 
-    if ($request->has('search')) {
-        $search = $request->search;
-        $query->where('jenis_kirim', 'like', "%$search%")
-              ->orWhere('nama_ekspedisi', 'like', "%$search%");
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where('jenis_kirim', 'like', "%$search%")
+                  ->orWhere('nama_ekspedisi', 'like', "%$search%");
+        }
+
+        $jenisPengiriman = $query->orderBy('created_at', 'desc')->paginate(10);
+
+        return view('jenis_pengiriman.index', [
+            'jenisPengiriman' => $jenisPengiriman,
+            'title'           => 'Admin',
+            'menu'            => 'Pengiriman',
+        ]);
     }
-
-    $jenisPengiriman = $query->orderBy('created_at', 'desc')->paginate(10);
-
-    return view('jenis_pengiriman.index', [
-        'jenisPengiriman' => $jenisPengiriman,
-        'title' => 'Admin',
-        'menu' => 'Pengiriman',
-    ]);
-}
-
 
     public function create()
     {
         return view('jenis_pengiriman.create', [
             'title' => 'Admin',
-            'menu' => 'Pengiriman'
+            'menu'  => 'Pengiriman'
         ]);
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'jenis_kirim' => 'required|in:ekonomi,kargo,regular,same day,standar',
+            'jenis_kirim'    => 'required|in:ekonomi,kargo,regular,same day,standar',
             'nama_ekspedisi' => 'required|string|max:255',
-            // 'ongkos_kirim' => 'required|decimal|max:255',
-            'ongkos_kirim' => 'required|integer',
+            'ongkos_kirim'   => 'required|integer',
             'logo_ekspedisi' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $data = $request->except('logo_ekspedisi');
 
-        // Upload logo ekspedisi
         if ($request->hasFile('logo_ekspedisi')) {
             $data['logo_ekspedisi'] = $request->file('logo_ekspedisi')->store('ekspedisi', 'public');
         }
@@ -62,8 +59,8 @@ class JenisPengirimanController extends Controller
     {
         $jenisPengiriman = JenisPengiriman::findOrFail($id);
         return view('jenis_pengiriman.edit', [
-            'title' => 'Admin',
-            'menu' => 'Pengiriman',
+            'title'           => 'Admin',
+            'menu'            => 'Pengiriman',
             'jenisPengiriman' => $jenisPengiriman
         ]);
     }
@@ -71,23 +68,19 @@ class JenisPengirimanController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'jenis_kirim' => 'required|in:ekonomi,kargo,regular,same day,standar',
+            'jenis_kirim'    => 'required|in:ekonomi,kargo,regular,same day,standar',
             'nama_ekspedisi' => 'required|string|max:255',
-            // 'ongkos_kirim' => 'required|double',
-            'ongkos_kirim' => 'required|integer',
+            'ongkos_kirim'   => 'required|integer',
             'logo_ekspedisi' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $jenisPengiriman = JenisPengiriman::findOrFail($id);
         $data = $request->except('logo_ekspedisi');
 
-        // Update logo jika ada upload baru
         if ($request->hasFile('logo_ekspedisi')) {
-            // Hapus logo lama
             if ($jenisPengiriman->logo_ekspedisi) {
                 Storage::disk('public')->delete($jenisPengiriman->logo_ekspedisi);
             }
-
             $data['logo_ekspedisi'] = $request->file('logo_ekspedisi')->store('ekspedisi', 'public');
         }
 
@@ -100,7 +93,12 @@ class JenisPengirimanController extends Controller
     {
         $jenisPengiriman = JenisPengiriman::findOrFail($id);
 
-        // Hapus logo jika ada
+        // Cek apakah jenis pengiriman ini sudah memiliki relasi ke data penjualan
+        if ($jenisPengiriman->penjualan()->count() > 0) {
+            return redirect()->route('jenis_pengiriman.index')
+                ->with('error', 'Jenis pengiriman tidak dapat dihapus karena sudah digunakan dalam data penjualan!');
+        }
+
         if ($jenisPengiriman->logo_ekspedisi) {
             Storage::disk('public')->delete($jenisPengiriman->logo_ekspedisi);
         }

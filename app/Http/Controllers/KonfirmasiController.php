@@ -71,5 +71,4 @@ class KonfirmasiController extends Controller
 
         
     }
-
 }

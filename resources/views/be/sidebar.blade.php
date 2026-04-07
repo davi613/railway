@@ -26,14 +26,24 @@
         @endif
 
         <div style="min-width:0; flex:1;">
-            <div class="bph-sidebar-uname">{{ Auth::user()->name }}</div>
+            {{-- <div class="bph-sidebar-uname">{{ Auth::user()->name }}</div>
             <div class="bph-sidebar-role">{{ Auth::user()->email }}</div>
             <form action="{{ route('logout') }}" method="POST" style="margin:0;">
                 @csrf
                 <button type="submit" class="bph-sidebar-logout-btn">
                     <i class="bi bi-box-arrow-right"></i> Logout
                 </button>
-            </form>
+            </form> --}}
+            @if(Auth::check())
+                <div class="bph-sidebar-uname">{{ Auth::user()->name }}</div>
+                <div class="bph-sidebar-role">{{ Auth::user()->email }}</div>
+                <form action="{{ route('logout') }}" method="POST" style="margin:0;">
+                    @csrf
+                    <button type="submit" class="bph-sidebar-logout-btn">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </button>
+                </form>
+            @endif
         </div>
     </div>
 
@@ -121,7 +131,7 @@
                 </li>
                 <li>
                     <a class="bph-nav-link" href="{{ route('jual.create') }}">
-                        <i class="bi bi-cash-register bph-nav-icon"></i>
+                        <i class="bi bi-cash bph-nav-icon"></i>
                         <span>Kasir Penjualan</span>
                     </a>
                 </li>

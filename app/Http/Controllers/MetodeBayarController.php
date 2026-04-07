@@ -8,31 +8,30 @@ use Illuminate\Support\Facades\Storage;
 
 class MetodeBayarController extends Controller
 {
-   public function index(Request $request)
-{
-    $query = MetodeBayar::query();
+    public function index(Request $request)
+    {
+        $query = MetodeBayar::query();
 
-    if ($request->has('search') && $request->search != '') {
-        $query->where('metode_pembayaran', 'like', '%' . $request->search . '%')
-              ->orWhere('tempat_bayar', 'like', '%' . $request->search . '%')
-              ->orWhere('no_rekening', 'like', '%' . $request->search . '%');
+        if ($request->has('search') && $request->search != '') {
+            $query->where('metode_pembayaran', 'like', '%' . $request->search . '%')
+                  ->orWhere('tempat_bayar', 'like', '%' . $request->search . '%')
+                  ->orWhere('no_rekening', 'like', '%' . $request->search . '%');
+        }
+
+        $metodeBayars = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+
+        return view('metode_bayar.index', [
+            'title'       => 'Admin',
+            'menu'        => 'Metode Bayar',
+            'metodeBayars' => $metodeBayars
+        ]);
     }
-
-    $metodeBayars = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
-
-    return view('metode_bayar.index', [
-        'title' => 'Admin',
-        'menu' => 'Metode Bayar',
-        'metodeBayars' => $metodeBayars
-    ]);
-}
-
 
     public function create()
     {
         return view('metode_bayar.create', [
             'title' => 'Admin',
-            'menu' => 'Metode Bayar'
+            'menu'  => 'Metode Bayar'
         ]);
     }
 
@@ -40,9 +39,9 @@ class MetodeBayarController extends Controller
     {
         $request->validate([
             'metode_pembayaran' => 'required|string|max:30',
-            'tempat_bayar' => 'required|string|max:50',
-            'no_rekening' => 'nullable|string|max:25',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'tempat_bayar'      => 'required|string|max:50',
+            'no_rekening'       => 'nullable|string|max:25',
+            'logo'              => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $data = $request->except('logo');
@@ -60,8 +59,8 @@ class MetodeBayarController extends Controller
     {
         $metodeBayar = MetodeBayar::findOrFail($id);
         return view('metode_bayar.edit', [
-            'title' => 'Admin',
-            'menu' => 'Metode Bayar',
+            'title'       => 'Admin',
+            'menu'        => 'Metode Bayar',
             'metodeBayar' => $metodeBayar
         ]);
     }
@@ -70,9 +69,9 @@ class MetodeBayarController extends Controller
     {
         $request->validate([
             'metode_pembayaran' => 'required|string|max:30',
-            'tempat_bayar' => 'required|string|max:50',
-            'no_rekening' => 'nullable|string|max:25',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'tempat_bayar'      => 'required|string|max:50',
+            'no_rekening'       => 'nullable|string|max:25',
+            'logo'              => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $metodeBayar = MetodeBayar::findOrFail($id);
@@ -82,7 +81,6 @@ class MetodeBayarController extends Controller
             if ($metodeBayar->url_logo) {
                 Storage::disk('public')->delete($metodeBayar->url_logo);
             }
-
             $data['url_logo'] = $request->file('logo')->store('metode_bayar_logo', 'public');
         }
 
@@ -94,6 +92,12 @@ class MetodeBayarController extends Controller
     public function destroy($id)
     {
         $metodeBayar = MetodeBayar::findOrFail($id);
+
+        // Cek apakah metode bayar ini sudah memiliki relasi ke data penjualan
+        if ($metodeBayar->penjualan()->count() > 0) {
+            return redirect()->route('metode_bayar.index')
+                ->with('error', 'Metode pembayaran tidak dapat dihapus karena sudah digunakan dalam data penjualan!');
+        }
 
         if ($metodeBayar->url_logo) {
             Storage::disk('public')->delete($metodeBayar->url_logo);

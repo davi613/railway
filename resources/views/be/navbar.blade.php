@@ -11,9 +11,16 @@
     </a>
 
     <!-- Welcome Text -->
+    {{-- <span class="bph-navbar-welcome">
+        Selamat Datang, <span>{{ Auth::user()->name }}</span> &mdash; Apotek BioPharm
+    </span> --}}
+
+    <!-- Welcome Text -->
+@if(Auth::check())
     <span class="bph-navbar-welcome">
         Selamat Datang, <span>{{ Auth::user()->name }}</span> &mdash; Apotek BioPharm
     </span>
+@endif
 
     <!-- User Dropdown -->
     <div class="dropdown" style="margin-left:auto; flex-shrink:0;">
@@ -65,14 +72,18 @@
         @elseif ($title === 'Karyawan')
             <a class="bph-user-pill" href="#" id="bphUserDrop" data-bs-toggle="dropdown" aria-expanded="false">
                 <img class="bph-user-pill-avatar" src="{{ asset('back-end/pht/karyawan.jpg') }}" alt="avatar">
+                @if(Auth::check())
                 <span class="bph-user-pill-name">{{ Auth::user()->name }}</span>
+                @endif
                 <i class="bi bi-chevron-down bph-user-pill-chevron"></i>
             </a>
             <div class="dropdown-menu dropdown-menu-end bph-dropdown-menu" aria-labelledby="bphUserDrop">
                 <div class="bph-dropdown-head">
                     <img src="{{ asset('back-end/pht/karyawan.jpg') }}" alt="avatar">
+                    @if(Auth::check())
                     <div class="dn">{{ Auth::user()->name }}</div>
                     <div class="de">{{ Auth::user()->email }}</div>
+                    @endif
                 </div>
                 <div class="bph-dropdown-body">
                     <form action="{{ route('logout') }}" method="POST">

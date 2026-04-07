@@ -50,6 +50,25 @@
 
     .bph-pos-footer { display:flex; justify-content:flex-end; gap:12px; margin-top:20px; }
 
+    /* Searchable select wrapper */
+    .bph-searchable-wrap { position:relative; width:100%; min-width:200px; }
+    .bph-search-input { width:100%; padding:9px 12px; border-radius:9px; border:1.5px solid #E2E8F0; font-size:0.88rem; font-weight:600; color:#1A1A2E; background:#fff; outline:none; transition:border 0.2s; box-sizing:border-box; }
+    .bph-search-input:focus { border-color:#F97316; box-shadow:0 0 0 3px rgba(249,115,22,0.1); }
+    .bph-dropdown-list { position:absolute; top:calc(100% + 4px); left:0; right:0; background:#fff; border:1.5px solid #F97316; border-radius:9px; max-height:200px; overflow-y:auto; z-index:9999; display:none; box-shadow:0 8px 24px rgba(249,115,22,0.15); }
+    .bph-dropdown-list.show { display:block; }
+    .bph-dropdown-item { padding:9px 12px; font-size:0.88rem; color:#1A1A2E; cursor:pointer; transition:background 0.15s; }
+    .bph-dropdown-item:hover { background:#FFF7ED; color:#F97316; font-weight:600; }
+    .bph-dropdown-item.no-result { color:#94A3B8; cursor:default; font-style:italic; }
+    .bph-dropdown-item.no-result:hover { background:#fff; color:#94A3B8; font-weight:400; }
+    /* hidden real select */
+    .bph-pos-select-hidden { display:none; }
+
+    /* stok tersedia input */
+    .bph-stok-input { background:#F1F5F9 !important; color:#64748B !important; cursor:not-allowed; text-align:center; font-weight:700; }
+
+    /* jumlah error */
+    .bph-jumlah-error { color:#EF4444; font-size:0.75rem; font-weight:600; margin-top:4px; display:none; }
+
     @media (max-width:640px) {
         .bph-pos-body { padding:16px; }
         .bph-pos-footer { flex-direction:column; }
@@ -71,18 +90,24 @@
     </div>
 </div>
 
+{{-- Data stok obat untuk JavaScript --}}
+<script>
+    const bphObatData = {!! json_encode($obat->map(fn($o) => ['id' => $o->id, 'nama' => $o->nama_obat, 'stok' => $o->stok, 'harga' => $o->harga_jual])) !!};
+</script>
+
 <div class="bph-pos-card">
     <div class="bph-pos-head">
         <h3><i class="bi bi-cash-register"></i> Input Transaksi Penjualan</h3>
     </div>
     <div class="bph-pos-body">
-        <form action="{{ route('jual.store') }}" method="POST">
+        <form action="{{ route('jual.store') }}" method="POST" id="bph-form">
             @csrf
             <div class="bph-pos-table-scroll">
                 <table class="bph-pos-table" id="bph-bulk-table">
                     <thead>
                         <tr>
                             <th>Obat</th>
+                            <th>Stok Tersedia</th>
                             <th>Jumlah</th>
                             <th>Harga Satuan</th>
                             <th>Subtotal</th>
@@ -95,16 +120,27 @@
                     </thead>
                     <tbody>
                         <tr class="bph-item-row">
-                            <td style="min-width:200px;">
-                                <select name="id_obat[]" class="bph-pos-select" required>
-                                    <option value="">-- Pilih Obat --</option>
-                                    @foreach($obat as $item)
-                                        <option value="{{ $item->id }}">{{ $item->nama_obat }}</option>
-                                    @endforeach
-                                </select>
+                            {{-- Kolom Obat: Searchable --}}
+                            <td style="min-width:220px;">
+                                <div class="bph-searchable-wrap">
+                                    <input type="text" class="bph-search-input bph-obat-search" placeholder="-- Cari / Pilih Obat --" autocomplete="off">
+                                    <div class="bph-dropdown-list"></div>
+                                    <select name="id_obat[]" class="bph-pos-select-hidden bph-pos-select" required>
+                                        <option value="">-- Pilih Obat --</option>
+                                        @foreach($obat as $item)
+                                            <option value="{{ $item->id }}">{{ $item->nama_obat }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </td>
+                            {{-- Kolom Stok Tersedia: Readonly, auto --}}
+                            <td style="min-width:110px;">
+                                <input type="text" class="bph-pos-input bph-stok-input bph-stok" value="-" readonly>
+                            </td>
+                            {{-- Kolom Jumlah + validasi --}}
                             <td style="min-width:110px;">
                                 <input type="number" name="jumlah[]" class="bph-pos-input bph-jumlah" required min="1" placeholder="0">
+                                <div class="bph-jumlah-error">Jumlah tidak boleh melebihi stok tersedia!</div>
                             </td>
                             <td style="min-width:140px;">
                                 <input type="number" name="harga[]" class="bph-pos-input bph-harga" required min="0" step="0.01" placeholder="0.00">
@@ -119,7 +155,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th colspan="3" style="text-align:right; font-size:0.9rem; font-weight:700; padding-right:20px; color:#FDBA74;">Nominal Total Belanja:</th>
+                            <th colspan="4" style="text-align:right; font-size:0.9rem; font-weight:700; padding-right:20px; color:#FDBA74;">Nominal Total Belanja:</th>
                             <th colspan="2">
                                 <input type="text" id="bph-grand-total" class="bph-pos-input bph-pos-total-input" value="Rp 0" readonly>
                             </th>
@@ -138,10 +174,12 @@
 </div>
 
 <script>
+    /* ===== Utility ===== */
     function bphParseRp(str) {
         return Number(str.replace(/[^0-9.,]/g, '').replace(/\./g, '').replace(/,/, '.')) || 0;
     }
 
+    /* ===== Recalc subtotal & grand total ===== */
     function bphRecalc(el) {
         const tr = el.closest('tr');
         const jumlah = parseFloat(tr.querySelector('.bph-jumlah').value) || 0;
@@ -157,25 +195,177 @@
         document.getElementById('bph-grand-total').value = "Rp " + total.toLocaleString('id-ID', { minimumFractionDigits: 2 });
     }
 
-    function bphInitListeners(row) {
-        row.querySelectorAll('.bph-jumlah, .bph-harga').forEach(el => {
-            el.addEventListener('input', () => bphRecalc(el));
+    /* ===== Validasi jumlah vs stok ===== */
+    function bphValidasiJumlah(jumlahInput) {
+        const tr = jumlahInput.closest('tr');
+        const stokInput = tr.querySelector('.bph-stok');
+        const errorEl  = tr.querySelector('.bph-jumlah-error');
+        const stokVal  = parseInt(stokInput.getAttribute('data-stok')) || 0;
+        const jumlahVal = parseInt(jumlahInput.value) || 0;
+
+        if (stokVal > 0 && jumlahVal > stokVal) {
+            jumlahInput.style.borderColor = '#EF4444';
+            jumlahInput.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.12)';
+            errorEl.style.display = 'block';
+            return false;
+        } else {
+            jumlahInput.style.borderColor = '';
+            jumlahInput.style.boxShadow = '';
+            errorEl.style.display = 'none';
+            return true;
+        }
+    }
+
+    /* ===== Set stok tersedia saat obat dipilih ===== */
+    function bphSetStok(tr, obatId) {
+        const stokInput = tr.querySelector('.bph-stok');
+        const jumlahInput = tr.querySelector('.bph-jumlah');
+        const hargaInput = tr.querySelector('.bph-harga');
+
+        if (!obatId) {
+            stokInput.value = '-';
+            stokInput.setAttribute('data-stok', '0');
+            return;
+        }
+
+        const found = bphObatData.find(o => String(o.id) === String(obatId));
+        if (found) {
+            stokInput.value = found.stok;
+            stokInput.setAttribute('data-stok', found.stok);
+            // Auto-isi harga jual jika harga belum diisi
+            if (!hargaInput.value) {
+                hargaInput.value = found.harga;
+            }
+        } else {
+            stokInput.value = '-';
+            stokInput.setAttribute('data-stok', '0');
+        }
+
+        // Reset validasi jumlah saat obat diganti
+        bphValidasiJumlah(jumlahInput);
+        bphRecalc(jumlahInput);
+    }
+
+    /* ===== Inisialisasi searchable dropdown ===== */
+    function bphInitSearchable(wrap) {
+        const searchInput = wrap.querySelector('.bph-obat-search');
+        const dropdown    = wrap.querySelector('.bph-dropdown-list');
+        const hiddenSelect = wrap.querySelector('.bph-pos-select');
+        const tr = wrap.closest('tr');
+
+        // Isi dropdown dengan semua opsi
+        function bphRenderDropdown(filter) {
+            dropdown.innerHTML = '';
+            const kata = filter.toLowerCase();
+            const results = bphObatData.filter(o => o.nama.toLowerCase().includes(kata));
+
+            if (results.length === 0) {
+                const noItem = document.createElement('div');
+                noItem.className = 'bph-dropdown-item no-result';
+                noItem.textContent = 'Obat tidak ditemukan';
+                dropdown.appendChild(noItem);
+                return;
+            }
+
+            results.forEach(o => {
+                const item = document.createElement('div');
+                item.className = 'bph-dropdown-item';
+                item.textContent = o.nama;
+                item.setAttribute('data-id', o.id);
+                item.addEventListener('mousedown', function (e) {
+                    e.preventDefault();
+                    // Set nilai hidden select
+                    hiddenSelect.value = o.id;
+                    // Set teks search input
+                    searchInput.value = o.nama;
+                    // Tutup dropdown
+                    dropdown.classList.remove('show');
+                    // Update stok tersedia
+                    bphSetStok(tr, o.id);
+                });
+                dropdown.appendChild(item);
+            });
+        }
+
+        // Buka dropdown saat fokus / klik
+        searchInput.addEventListener('focus', function () {
+            bphRenderDropdown(searchInput.value);
+            dropdown.classList.add('show');
+        });
+
+        // Filter saat mengetik
+        searchInput.addEventListener('input', function () {
+            // Reset hidden select saat mengetik ulang
+            hiddenSelect.value = '';
+            bphSetStok(tr, '');
+            bphRenderDropdown(searchInput.value);
+            if (!dropdown.classList.contains('show')) {
+                dropdown.classList.add('show');
+            }
+        });
+
+        // Tutup dropdown saat blur
+        searchInput.addEventListener('blur', function () {
+            setTimeout(() => { dropdown.classList.remove('show'); }, 150);
         });
     }
 
+    /* ===== Init semua listener untuk satu baris ===== */
+    function bphInitListeners(row) {
+        // Searchable
+        const wrap = row.querySelector('.bph-searchable-wrap');
+        if (wrap) bphInitSearchable(wrap);
+
+        // Recalc saat input jumlah / harga
+        row.querySelectorAll('.bph-jumlah, .bph-harga').forEach(el => {
+            el.addEventListener('input', function () {
+                if (el.classList.contains('bph-jumlah')) {
+                    bphValidasiJumlah(el);
+                }
+                bphRecalc(el);
+            });
+        });
+    }
+
+    /* ===== Tambah baris ===== */
     document.getElementById('bph-add-row').addEventListener('click', function () {
         const tbody = document.querySelector('#bph-bulk-table tbody');
-        const newRow = tbody.querySelector('tr').cloneNode(true);
-        newRow.querySelectorAll('select, input').forEach(el => {
-            if (el.tagName === 'SELECT') el.selectedIndex = 0;
-            else if (el.classList.contains('bph-subtotal')) el.value = 'Rp 0';
-            else el.value = '';
+        const templateRow = tbody.querySelector('tr');
+        const newRow = templateRow.cloneNode(true);
+
+        // Reset semua input di baris baru
+        newRow.querySelectorAll('input').forEach(el => {
+            if (el.classList.contains('bph-subtotal')) {
+                el.value = 'Rp 0';
+            } else if (el.classList.contains('bph-stok-input')) {
+                el.value = '-';
+                el.setAttribute('data-stok', '0');
+            } else if (el.classList.contains('bph-obat-search')) {
+                el.value = '';
+            } else {
+                el.value = '';
+            }
+            el.style.borderColor = '';
+            el.style.boxShadow = '';
         });
+
+        // Reset hidden select
+        newRow.querySelectorAll('select').forEach(el => { el.selectedIndex = 0; el.value = ''; });
+
+        // Sembunyikan error jumlah
+        const errEl = newRow.querySelector('.bph-jumlah-error');
+        if (errEl) errEl.style.display = 'none';
+
+        // Reset dropdown list
+        const dl = newRow.querySelector('.bph-dropdown-list');
+        if (dl) { dl.innerHTML = ''; dl.classList.remove('show'); }
+
         tbody.appendChild(newRow);
         bphInitListeners(newRow);
         bphUpdateGrandTotal();
     });
 
+    /* ===== Hapus baris ===== */
     document.querySelector('#bph-bulk-table').addEventListener('click', function (e) {
         if (e.target.closest('.bph-remove-row')) {
             const rows = document.querySelectorAll('.bph-item-row');
@@ -186,6 +376,20 @@
         }
     });
 
+    /* ===== Cegah submit jika ada validasi gagal ===== */
+    document.getElementById('bph-form').addEventListener('submit', function (e) {
+        let valid = true;
+        document.querySelectorAll('.bph-jumlah').forEach(input => {
+            if (!bphValidasiJumlah(input)) valid = false;
+        });
+        // Cek apakah semua baris sudah memilih obat
+        document.querySelectorAll('.bph-pos-select').forEach(sel => {
+            if (!sel.value) valid = false;
+        });
+        if (!valid) e.preventDefault();
+    });
+
+    /* ===== Init baris pertama ===== */
     document.querySelectorAll('.bph-item-row').forEach(bphInitListeners);
     bphUpdateGrandTotal();
 </script>

@@ -147,6 +147,28 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+// Tampilkan notifikasi sukses
+@if (session('success'))
+    Swal.fire({
+        title: 'Berhasil!',
+        text: '{{ session('success') }}',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#F97316'
+    });
+@endif
+
+// Tampilkan notifikasi error (gagal hapus karena ada relasi)
+@if (session('error'))
+    Swal.fire({
+        title: 'Tidak Dapat Dihapus!',
+        text: '{{ session('error') }}',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#F97316'
+    });
+@endif
+
 function bphConfirmDelete(id) {
     Swal.fire({
         title: 'Hapus Jenis Pengiriman?',
@@ -160,6 +182,7 @@ function bphConfirmDelete(id) {
         reverseButtons: true
     }).then(r => { if (r.isConfirmed) document.getElementById('del-' + id).submit(); });
 }
+
 var bphModal = document.getElementById('bphLogoModal');
 if (bphModal) {
     bphModal.addEventListener('show.bs.modal', function (e) {

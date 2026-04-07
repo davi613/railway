@@ -51,7 +51,6 @@
                         <th style="text-align:center;">No</th>
                         <th>Metode Pembayaran</th>
                         <th>Tempat Bayar</th>
-                    
                         <th style="text-align:center;">Logo</th>
                         <th>Dibuat</th>
                         <th>Diperbarui</th>
@@ -145,6 +144,28 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+// Tampilkan notifikasi sukses
+@if (session('success'))
+    Swal.fire({
+        title: 'Berhasil!',
+        text: '{{ session('success') }}',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#F97316'
+    });
+@endif
+
+// Tampilkan notifikasi error (gagal hapus karena ada relasi)
+@if (session('error'))
+    Swal.fire({
+        title: 'Tidak Dapat Dihapus!',
+        text: '{{ session('error') }}',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#F97316'
+    });
+@endif
+
 function bphConfirmDelete(id) {
     Swal.fire({
         title: 'Hapus Metode Pembayaran?',

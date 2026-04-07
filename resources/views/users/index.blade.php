@@ -77,6 +77,9 @@
                                         <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="bph-del-form" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
+                                            <button type="button" class="bph-btn bph-btn-danger bph-btn-sm bph-btn-ico btn-delete-single" title="Hapus User" data-id="{{ $user->id }}" data-name="{{ $user->name }}">
+                                                <i class="bi bi-trash3-fill"></i>
+                                            </button>
                                         </form>
                                     </div>
                                 </td>
@@ -131,9 +134,14 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const pesan = "{{ session('pesan') }}";
-    if (pesan.trim()) {
-        Swal.fire({ title: 'Sukses!', text: pesan, icon: 'success', confirmButtonColor: '#F97316' });
+    // Menampilkan notifikasi sukses/error dari session
+    const success = "{{ session('success') }}";
+    const error = "{{ session('error') }}";
+    if (success.trim()) {
+        Swal.fire({ title: 'Sukses!', text: success, icon: 'success', confirmButtonColor: '#F97316' });
+    }
+    if (error.trim()) {
+        Swal.fire({ title: 'Gagal!', html: error, icon: 'error', confirmButtonColor: '#F97316' });
     }
 
     // Search
@@ -173,6 +181,29 @@ document.addEventListener('DOMContentLoaded', function () {
         cb.addEventListener('change', function () {
             selectAll.checked = Array.from(checkboxes).every(c => c.checked);
             updateBulkBtn();
+        });
+    });
+
+    // Single Delete (dengan konfirmasi)
+    document.querySelectorAll('.btn-delete-single').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const form = this.closest('form');
+            const name = this.getAttribute('data-name');
+            Swal.fire({
+                title: 'Hapus User?',
+                text: `User "${name}" akan dihapus secara permanen!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#F97316',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
         });
     });
 
