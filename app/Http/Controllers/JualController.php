@@ -31,6 +31,30 @@ class JualController extends Controller
             'harga.*'     => 'required|numeric|min:0',
         ]);
 
+        // Validasi kumulatif stok per obat
+        // Hitung total jumlah per id_obat dari request
+        $totalPerObat = [];
+        foreach ($validated['id_obat'] as $i => $obatId) {
+            $qty = $validated['jumlah'][$i];
+            if (!isset($totalPerObat[$obatId])) {
+                $totalPerObat[$obatId] = 0;
+            }
+            $totalPerObat[$obatId] += $qty;
+        }
+
+        // Cek apakah total jumlah melebihi stok yang tersedia
+        foreach ($totalPerObat as $obatId => $totalQty) {
+            $obat = Obat::find($obatId);
+            if ($obat && $totalQty > $obat->stok) {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->withErrors([
+                        'jumlah' => 'Total jumlah untuk obat "' . $obat->nama_obat . '" (' . $totalQty . ') melebihi stok yang tersedia (' . $obat->stok . ').'
+                    ]);
+            }
+        }
+
         DB::transaction(function() use ($validated) {
             foreach ($validated['id_obat'] as $i => $obatId) {
                 $qty   = $validated['jumlah'][$i];
@@ -51,7 +75,4 @@ class JualController extends Controller
        ->route('jual.create')
        ->with('success', 'Semua data penjualan berhasil disimpan!');
     }
-
-   
-
 }

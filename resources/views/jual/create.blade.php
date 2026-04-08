@@ -179,6 +179,30 @@
         return Number(str.replace(/[^0-9.,]/g, '').replace(/\./g, '').replace(/,/, '.')) || 0;
     }
 
+    /* ===== Hitung total jumlah yang sudah dipakai untuk suatu obat di semua baris,
+             kecuali baris yang dikecualikan (currentRow) ===== */
+    function bphGetTotalJumlahObatLain(obatId, currentRow) {
+        let total = 0;
+        document.querySelectorAll('.bph-item-row').forEach(function(row) {
+            if (row === currentRow) return;
+            const sel = row.querySelector('.bph-pos-select');
+            if (!sel || String(sel.value) !== String(obatId)) return;
+            const jumlahVal = parseInt(row.querySelector('.bph-jumlah').value) || 0;
+            total += jumlahVal;
+        });
+        return total;
+    }
+
+    /* ===== Hitung sisa stok yang tersedia untuk obat tertentu di baris tertentu ===== */
+    function bphGetSisaStok(obatId, currentRow) {
+        if (!obatId) return 0;
+        const found = bphObatData.find(o => String(o.id) === String(obatId));
+        if (!found) return 0;
+        const stokTotal = found.stok;
+        const sudahDipakai = bphGetTotalJumlahObatLain(obatId, currentRow);
+        return stokTotal - sudahDipakai;
+    }
+
     /* ===== Recalc subtotal & grand total ===== */
     function bphRecalc(el) {
         const tr = el.closest('tr');
@@ -195,17 +219,28 @@
         document.getElementById('bph-grand-total').value = "Rp " + total.toLocaleString('id-ID', { minimumFractionDigits: 2 });
     }
 
-    /* ===== Validasi jumlah vs stok ===== */
+    /* ===== Validasi jumlah vs stok kumulatif ===== */
     function bphValidasiJumlah(jumlahInput) {
         const tr = jumlahInput.closest('tr');
-        const stokInput = tr.querySelector('.bph-stok');
-        const errorEl  = tr.querySelector('.bph-jumlah-error');
-        const stokVal  = parseInt(stokInput.getAttribute('data-stok')) || 0;
+        const sel = tr.querySelector('.bph-pos-select');
+        const errorEl = tr.querySelector('.bph-jumlah-error');
+        const obatId = sel ? sel.value : '';
         const jumlahVal = parseInt(jumlahInput.value) || 0;
 
-        if (stokVal > 0 && jumlahVal > stokVal) {
+        if (!obatId) {
+            // Belum pilih obat, tidak validasi jumlah
+            jumlahInput.style.borderColor = '';
+            jumlahInput.style.boxShadow = '';
+            errorEl.style.display = 'none';
+            return true;
+        }
+
+        const sisaStok = bphGetSisaStok(obatId, tr);
+
+        if (jumlahVal > sisaStok) {
             jumlahInput.style.borderColor = '#EF4444';
             jumlahInput.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.12)';
+            errorEl.textContent = 'Jumlah tidak boleh melebihi stok tersedia! (Sisa: ' + sisaStok + ')';
             errorEl.style.display = 'block';
             return false;
         } else {
@@ -214,6 +249,17 @@
             errorEl.style.display = 'none';
             return true;
         }
+    }
+
+    /* ===== Re-validasi semua baris yang memiliki obat yang sama dengan obatId ===== */
+    function bphRevalidasiSemuaBaris(obatId) {
+        if (!obatId) return;
+        document.querySelectorAll('.bph-item-row').forEach(function(row) {
+            const sel = row.querySelector('.bph-pos-select');
+            if (!sel || String(sel.value) !== String(obatId)) return;
+            const jumlahInput = row.querySelector('.bph-jumlah');
+            bphValidasiJumlah(jumlahInput);
+        });
     }
 
     /* ===== Set stok tersedia saat obat dipilih ===== */
@@ -225,12 +271,16 @@
         if (!obatId) {
             stokInput.value = '-';
             stokInput.setAttribute('data-stok', '0');
+            bphValidasiJumlah(jumlahInput);
+            bphRecalc(jumlahInput);
             return;
         }
 
         const found = bphObatData.find(o => String(o.id) === String(obatId));
         if (found) {
-            stokInput.value = found.stok;
+            // Tampilkan sisa stok yang tersedia (dikurangi baris lain yang sama)
+            const sisaStok = bphGetSisaStok(obatId, tr);
+            stokInput.value = sisaStok;
             stokInput.setAttribute('data-stok', found.stok);
             // Auto-isi harga jual jika harga belum diisi
             if (!hargaInput.value) {
@@ -241,9 +291,21 @@
             stokInput.setAttribute('data-stok', '0');
         }
 
-        // Reset validasi jumlah saat obat diganti
+        // Validasi jumlah saat obat diganti
         bphValidasiJumlah(jumlahInput);
         bphRecalc(jumlahInput);
+    }
+
+    /* ===== Update tampilan stok tersedia di semua baris yang punya obat sama ===== */
+    function bphUpdateStokTampilan(obatId) {
+        if (!obatId) return;
+        document.querySelectorAll('.bph-item-row').forEach(function(row) {
+            const sel = row.querySelector('.bph-pos-select');
+            if (!sel || String(sel.value) !== String(obatId)) return;
+            const stokInput = row.querySelector('.bph-stok');
+            const sisaStok = bphGetSisaStok(obatId, row);
+            stokInput.value = sisaStok;
+        });
     }
 
     /* ===== Inisialisasi searchable dropdown ===== */
@@ -274,14 +336,24 @@
                 item.setAttribute('data-id', o.id);
                 item.addEventListener('mousedown', function (e) {
                     e.preventDefault();
+                    // Simpan obatId lama sebelum diganti
+                    const obatIdLama = hiddenSelect.value;
                     // Set nilai hidden select
                     hiddenSelect.value = o.id;
                     // Set teks search input
                     searchInput.value = o.nama;
                     // Tutup dropdown
                     dropdown.classList.remove('show');
-                    // Update stok tersedia
+                    // Update stok tersedia di baris ini
                     bphSetStok(tr, o.id);
+                    // Update tampilan stok di baris lain yang punya obat lama
+                    if (obatIdLama && obatIdLama !== String(o.id)) {
+                        bphUpdateStokTampilan(obatIdLama);
+                        bphRevalidasiSemuaBaris(obatIdLama);
+                    }
+                    // Update tampilan stok di baris lain yang punya obat baru
+                    bphUpdateStokTampilan(String(o.id));
+                    bphRevalidasiSemuaBaris(String(o.id));
                 });
                 dropdown.appendChild(item);
             });
@@ -295,8 +367,15 @@
 
         // Filter saat mengetik
         searchInput.addEventListener('input', function () {
+            // Simpan obatId lama
+            const obatIdLama = hiddenSelect.value;
             // Reset hidden select saat mengetik ulang
             hiddenSelect.value = '';
+            // Update stok lama jika ada
+            if (obatIdLama) {
+                bphUpdateStokTampilan(obatIdLama);
+                bphRevalidasiSemuaBaris(obatIdLama);
+            }
             bphSetStok(tr, '');
             bphRenderDropdown(searchInput.value);
             if (!dropdown.classList.contains('show')) {
@@ -320,7 +399,22 @@
         row.querySelectorAll('.bph-jumlah, .bph-harga').forEach(el => {
             el.addEventListener('input', function () {
                 if (el.classList.contains('bph-jumlah')) {
+                    const tr = el.closest('tr');
+                    const sel = tr.querySelector('.bph-pos-select');
+                    const obatId = sel ? sel.value : '';
                     bphValidasiJumlah(el);
+                    // Update tampilan stok dan validasi di baris lain yang punya obat sama
+                    if (obatId) {
+                        bphUpdateStokTampilan(obatId);
+                        // Re-validasi baris lain yang punya obat sama (kecuali baris ini)
+                        document.querySelectorAll('.bph-item-row').forEach(function(otherRow) {
+                            if (otherRow === tr) return;
+                            const otherSel = otherRow.querySelector('.bph-pos-select');
+                            if (!otherSel || String(otherSel.value) !== String(obatId)) return;
+                            const otherJumlah = otherRow.querySelector('.bph-jumlah');
+                            bphValidasiJumlah(otherJumlah);
+                        });
+                    }
                 }
                 bphRecalc(el);
             });
@@ -370,7 +464,15 @@
         if (e.target.closest('.bph-remove-row')) {
             const rows = document.querySelectorAll('.bph-item-row');
             if (rows.length > 1) {
-                e.target.closest('tr').remove();
+                const removedRow = e.target.closest('tr');
+                const sel = removedRow.querySelector('.bph-pos-select');
+                const obatId = sel ? sel.value : '';
+                removedRow.remove();
+                // Setelah hapus baris, update stok dan re-validasi baris lain yang punya obat sama
+                if (obatId) {
+                    bphUpdateStokTampilan(obatId);
+                    bphRevalidasiSemuaBaris(obatId);
+                }
                 bphUpdateGrandTotal();
             }
         }
